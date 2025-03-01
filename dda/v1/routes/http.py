@@ -1,4 +1,3 @@
-import logging
 import uuid
 from typing import Generic
 from typing import TypeAlias

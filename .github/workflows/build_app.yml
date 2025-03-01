@@ -1,0 +1,36 @@
+name: Build App
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install Poetry
+        run: |
+          sudo apt-get install python3-poetry
+          poetry --version
+
+      - name: Install Dependencies
+        run: poetry install --with dev,test
+
+      - name: Check Style
+        run: poetry run ruff check .
+
+      - name: Check Types
+        run: poetry run mypy dda/
