@@ -22,6 +22,6 @@ class HealthResponse(Schema):
         200: APIResponse[HealthResponse]
     }
 )
-async def get_app_health(request: HttpRequest):
+async def get_app_health(request: HttpRequest) -> APIResponse[HealthResponse]:
     """A simple health check to ensure the server is alive"""
     return APIResponse(data=HealthResponse(status="up"))
