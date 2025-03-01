@@ -25,7 +25,7 @@ LOGGING = {
     "disable_existing_loggers": False,
     "formatters": {
         "basic": {
-            "format": "[{asctime}] {levelname} {name} ({filename}:{lineno}) - {message}",
+            "format": "[{asctime}] level={levelname} tid={tid} user_id={user_id} message={message}",
             "style": "{",
         }
     },
@@ -44,3 +44,8 @@ LOGGING = {
         }
     },
 }
+
+
+MIDDLEWARE = [
+    "dda.v1.routes.middleware.transaction.transaction_middleware"
+]

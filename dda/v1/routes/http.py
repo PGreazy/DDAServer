@@ -1,5 +1,9 @@
+import logging
+import uuid
 from typing import Generic
+from typing import TypeAlias
 from typing import TypeVar
+from django.http import HttpRequest
 from ninja import Field
 from ninja import Schema
 
@@ -37,3 +41,32 @@ class APIResponse(Schema, Generic[T]):
     """
     data: T
     error_code: str | None = Field(alias="errorCode", default=None)
+
+
+TransactionId: TypeAlias = uuid.UUID
+
+
+class APIRequestState(Schema):
+    """
+    A class that represents additional state to be tagged onto
+    a request before the actual handler has completed.
+
+    Attributes:
+        tid (TransactionId): A unique UUID for the request.
+        user_id (str): The user ID currently authenticated, if there is one.
+    """
+    tid: TransactionId
+    # Update type when I can
+    user_id: str | None = None
+
+
+class APIRequest(HttpRequest):
+    """
+    APIRequest extends the base django HttpRequest to include
+    a state value, which will contain various request state. This
+    is used purely for typing reasons, and should not be instantiated.
+
+    Attributes:
+        state (APIRequestState): Custom state attached to a request.
+    """
+    state: APIRequestState

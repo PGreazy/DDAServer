@@ -1,9 +1,9 @@
 import logging
-from django.http import HttpRequest
 from django.urls import path
 from ninja import NinjaAPI
 from ninja import Schema
 from dda.v1.routes.http import APIResponse
+from dda.v1.routes.http import APIRequest
 
 
 logger = logging.getLogger("dda")
@@ -27,9 +27,9 @@ class HealthResponse(Schema):
         200: APIResponse[HealthResponse]
     }
 )
-async def get_app_health(request: HttpRequest) -> APIResponse[HealthResponse]:
+async def get_app_health(request: APIRequest) -> APIResponse[HealthResponse]:
     """A simple health check to ensure the server is alive"""
-    logger.info("Reporting status UP for health check.")
+    logger.info("Reporting status UP for health check.", extra=request.state.dict())
     return APIResponse(data=HealthResponse(status="up"))
 
 
