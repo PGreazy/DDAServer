@@ -18,7 +18,7 @@ class APIResponse(Schema, Generic[T]):
     Example:
         >>> from ninja import Schema, Router
         >>> from django.http import HttpRequest
-        >>> from dda.routes.http import ApiResponse
+        >>> from dda.v1.routes.http import ApiResponse
         >>> router = Router()
 
         >>> class MyResponse(Schema):

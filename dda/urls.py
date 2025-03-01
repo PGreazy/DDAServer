@@ -1,8 +1,6 @@
+from django.urls import include
 from django.urls import path
 
-from dda.routes.api import dda_api
-
-
 urlpatterns = [
-    path("", dda_api.urls)
+    path("v1/", include("dda.v1.routes.api"))
 ]
