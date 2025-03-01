@@ -11,6 +11,7 @@ logger = logging.getLogger("dda")
 
 
 def transaction_middleware(get_response: Callable[[HttpRequest], HttpResponse]):
+    """Middleware to initialize a transaction and time a request."""
     def middleware(request: HttpRequest) -> HttpResponse:
         request.state = APIRequestState(tid=uuid.uuid4())
         logger.info("REQUEST START", extra=request.state.dict())
