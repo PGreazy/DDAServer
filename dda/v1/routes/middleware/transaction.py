@@ -24,5 +24,6 @@ def transaction_middleware(get_response: ResponseProcessor[HttpRequest]) -> Resp
         total_time_ms = round((end_time - start_time) * 1000)
         logger.info("REQUEST END", extra=request.state.dict())
         logger.info(f"Total request time {total_time_ms}ms", extra=request.state.dict())
+        response.headers["X-DDA-TID"] = str(request.state.tid)
         return response
     return middleware
