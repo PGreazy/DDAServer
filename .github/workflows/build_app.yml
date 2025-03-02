@@ -33,7 +33,7 @@ jobs:
         run: poetry run ruff check .
 
       - name: Check Types
-        run: poetry run mypy dda/
+        run: poetry run mypy dda/ tests/
 
       - name: Run Tests
         run: poetry run pytest --cov-branch --cov-report=xml -p no:warnings

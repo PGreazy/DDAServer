@@ -41,6 +41,12 @@ env = [
 ]
 
 
+[tool.ruff]
+exclude = [
+    "tests/settings.py"
+]
+
+
 
 [build-system]
 requires = ["poetry-core"]

@@ -1,5 +1,6 @@
 from typing import Any
 from typing import Callable
+from typing import Coroutine
 from typing import TypeAlias
 from ninja import Schema
 
@@ -23,4 +24,4 @@ class APIResponse(Schema):
     response: JSON | None = None
 
 
-APICaller: TypeAlias = Callable[..., APIResponse]
+APICaller: TypeAlias = Callable[..., Coroutine[Any, Any, APIResponse]]

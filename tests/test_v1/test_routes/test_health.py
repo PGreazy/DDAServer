@@ -1,9 +1,10 @@
 import pytest
 from http import HTTPStatus
-from tests.conftest import APICaller
+from tests.types import APICaller
 
 
 @pytest.mark.asyncio
-async def test_should_return_200_when_app_is_up(api_get: APICaller):
+async def test_should_return_200_when_app_is_up(api_get: APICaller) -> None:
     health_response = await api_get("/v1/glb/health/full", expected_status_code=HTTPStatus.OK)
+    assert health_response.response is not None
     assert health_response.response["status"] == "up"

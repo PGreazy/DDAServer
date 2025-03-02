@@ -1,8 +1,8 @@
 import pytest
 from functools import partial
+from typing import Any
 from typing import Callable
 from django.test import AsyncClient
-from ninja.testing.client import NinjaResponse
 from tests.types import APICaller
 from tests.types import APIResponse
 from tests.types import HeaderDict
@@ -15,7 +15,7 @@ def api_test_client() -> AsyncClient:
 
 
 async def _fetch_resource(
-    request_method_caller: Callable[..., NinjaResponse],
+    request_method_caller: Callable[..., Any],  # No proper type for an ASGI response...
     path: str,
     expected_status_code: int | None = None,
     headers: HeaderDict | None = None,
