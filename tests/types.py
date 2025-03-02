@@ -15,13 +15,13 @@ class APIResponse(Schema):
     in writing meaningful, easy to use and reuse tests.
 
     Attributes:
+        response (JSON): JSON response, if errors present will be an empty dict
         status_code (int): HTTP status code of response
         error_code (str): String error code, if errors are present
-        response (JSON): JSON response, if errors present will be None
     """
+    response: JSON
     status_code: int
     error_code: str | None = None
-    response: JSON | None = None
 
 
 APICaller: TypeAlias = Callable[..., Coroutine[Any, Any, APIResponse]]

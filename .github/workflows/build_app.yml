@@ -36,7 +36,7 @@ jobs:
         run: poetry run mypy dda/ tests/
 
       - name: Run Tests
-        run: poetry run pytest --cov-branch --cov-report=xml -p no:warnings
+        run: poetry run pytest --cov=dda --cov-branch --cov-report=xml -p no:warnings
 
       - name: Upload Coverage
         uses: codecov/codecov-action@v5

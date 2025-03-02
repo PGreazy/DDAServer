@@ -33,6 +33,7 @@ async def _fetch_resource(
         assert "errorCode" in response_json
         return APIResponse(
             error_code=response_json["errorCode"],
+            response={},
             status_code=response.status_code
         )
     assert "data" in response_json
