@@ -11,6 +11,7 @@ from tests.types import QueryParamDict
 
 @pytest.fixture(scope="session")
 def api_test_client() -> AsyncClient:
+    """Get a Django async test client for use by the entire test suite"""
     return AsyncClient()
 
 
@@ -21,6 +22,23 @@ async def _fetch_resource(
     headers: HeaderDict | None = None,
     query_params: QueryParamDict | None = None
 ) -> APIResponse:
+    """
+    Given a method to execute an HTTP request, make the request, parse
+    for the expected status and expected return format based on that status,
+    and return back for the caller to further assert.
+
+    Args:
+        request_method_caller (Callable): An AsyncClient extension method to execute an HTTP request.
+        path (str): A path on which to execute the request.
+        expected_status_code (int): The expected status code on which we will assert is present on the response.
+        headers (HeaderDict): Any headers to pass with the request.
+        query_params (QueryParamDict): Any query params to include in the request
+
+    Returns:
+        An await-ed response from the given request configuration in a custom format (APIResponse) to make assertion
+        simpler. If the request is successful and data is returned, the inner object form the "data" entry
+        will be stripped and returned in APIResponse.
+    """
     response = await request_method_caller(
         headers=headers if headers is not None else {},
         path=path,
@@ -45,6 +63,7 @@ async def _fetch_resource(
 
 @pytest.fixture(scope="session")
 def api_get(api_test_client: AsyncClient) -> APICaller:
+    """Gets a callable that will GET on a given REST resource."""
     return partial(
         _fetch_resource,
         api_test_client.get
