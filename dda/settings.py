@@ -1,4 +1,5 @@
 import os
+import dj_database_url
 from dda.env import Env
 
 
@@ -15,6 +16,8 @@ def get_log_level() -> str:
         return "DEBUG"
     return "INFO"
 
+
+SESSION_LENGTH_MINUTES = int(os.environ.get("SESSION_LENGTH_MINUTES", 15))
 
 LOGGING = {
     "version": 1,
@@ -61,6 +64,15 @@ TEMPLATES = [
 ]
 
 
+DATABASES = {
+    "default": dj_database_url.config(
+        conn_max_age=600,
+        conn_health_checks=True
+    )
+}
+
+
 INSTALLED_APPS = [
-    "django.contrib.contenttypes"
+    "django.contrib.contenttypes",
+    "dda.v1"
 ]
