@@ -3,6 +3,7 @@ from datetime import datetime
 from datetime import timedelta
 from datetime import timezone
 from enum import Enum
+from typing import TypeAlias
 from django.db import models
 from django.conf import settings
 from dda.v1.models.base import AbstractDatedModel
@@ -10,6 +11,9 @@ from dda.v1.models.base import AbstractDatedModel
 
 class UserSource(Enum):
     GOOGLE = "google"
+
+
+UserId: TypeAlias = uuid.UUID
 
 
 class User(AbstractDatedModel):
@@ -26,12 +30,12 @@ class User(AbstractDatedModel):
         profile_picture (str): A link to the user's profile photo, if present.
         source (str): Where the original user signup came from.
     """
-    email = models.CharField(null=False)
+    email = models.CharField(null=False, unique=True)
     family_name = models.CharField(null=False)
     given_name = models.CharField(null=False)
     id = models.UUIDField(default=uuid.uuid4, primary_key=True)
     is_email_verified = models.BooleanField(default=False)
-    phone_number = models.CharField()
+    phone_number = models.CharField(unique=True)
     profile_picture = models.CharField()
     source = models.CharField(
         choices=[(entry.name, entry.value) for entry in UserSource],
@@ -40,6 +44,10 @@ class User(AbstractDatedModel):
 
     def __str__(self) -> str:
         return f"{id}"
+
+
+def _generate_session_token() -> str:
+    return f"tk-{''.join(str(uuid.uuid4()).split('-'))}"
 
 
 def _get_expiry_date() -> datetime:
@@ -56,11 +64,13 @@ class SessionToken(models.Model):
         expires_at (datetime): The time when this token expires.
         user (User): The user associated with this token.
     """
-    token = models.CharField(null=False, primary_key=True)
+    token = models.CharField(default=_generate_session_token, null=False, primary_key=True)
     expires_at = models.DateField(default=_get_expiry_date, null=False)
     user = models.OneToOneField(
         User,
-        on_delete=models.CASCADE
+        null=True,
+        on_delete=models.CASCADE,
+        related_name="session"
     )
 
     @property

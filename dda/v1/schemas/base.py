@@ -2,7 +2,7 @@ from ninja import Schema
 from pydantic.alias_generators import to_camel
 
 
-class ResponseSchema(Schema):
+class BaseSchema(Schema):
     """
     A small base class that defines basic, global behavior that
     any response object should follow. All objects involved in

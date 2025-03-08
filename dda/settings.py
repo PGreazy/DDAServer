@@ -7,6 +7,8 @@ SECRET_KEY = os.environ["DJANGO_SECRET"]
 DEBUG = os.environ.get("DEBUG", None) == "True"
 ROOT_URLCONF = "dda.urls"
 
+GOOGLE_CLIENT_ID = os.environ.get("GOOGLE_CLIENT_ID", None)
+
 
 ENVIRONMENT = Env.get_env()
 

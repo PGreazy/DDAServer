@@ -4,13 +4,13 @@ from typing import TypeAlias
 from typing import TypeVar
 from django.http import HttpRequest
 from ninja import Schema
-from dda.v1.schemas.base import ResponseSchema
+from dda.v1.schemas.base import BaseSchema
 
 
 T = TypeVar("T")
 
 
-class APIResponse(ResponseSchema, Generic[T]):
+class APIResponse(BaseSchema, Generic[T]):
     """
     A generic response type to be applied anywhere in this application.
 
@@ -38,7 +38,7 @@ class APIResponse(ResponseSchema, Generic[T]):
         ...    # Some work...
         ...    pass
     """
-    data: T
+    data: T | None = None
     error_code: str | None = None
 
 
