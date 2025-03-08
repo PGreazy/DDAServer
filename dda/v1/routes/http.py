@@ -3,14 +3,14 @@ from typing import Generic
 from typing import TypeAlias
 from typing import TypeVar
 from django.http import HttpRequest
-from ninja import Field
 from ninja import Schema
+from dda.v1.schemas.base import ResponseSchema
 
 
 T = TypeVar("T")
 
 
-class APIResponse(Schema, Generic[T]):
+class APIResponse(ResponseSchema, Generic[T]):
     """
     A generic response type to be applied anywhere in this application.
 
@@ -39,7 +39,7 @@ class APIResponse(Schema, Generic[T]):
         ...    pass
     """
     data: T
-    error_code: str | None = Field(alias="errorCode", default=None)
+    error_code: str | None = None
 
 
 TransactionId: TypeAlias = uuid.UUID

@@ -1,9 +1,17 @@
 from django.urls import path
 from ninja import NinjaAPI
+from dda.env import Env
 from dda.v1.routes.glb import glb_router
 
 
-dda_api = NinjaAPI(title="DDA-API")
+IS_PRODUCTION = Env.get_env() == Env.PRODUCTION
+
+
+dda_api = NinjaAPI(
+    docs_url=None if IS_PRODUCTION else "/docs",  # Disable docs in production
+    openapi_url=None if IS_PRODUCTION else "/openapi.json",
+    title="DDA-API"
+)
 dda_api.add_router("glb", glb_router)
 
 

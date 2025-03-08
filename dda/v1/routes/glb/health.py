@@ -1,17 +1,17 @@
 import logging
 from ninja import Router
-from ninja import Schema
 from dda.v1.routes.http import APIResponse
 from dda.v1.routes.http import APIRequest
+from dda.v1.schemas.base import ResponseSchema
 
 
 logger = logging.getLogger("dda")
 
 
-health_router = Router(tags=["glb", "health"])
+health_router = Router(tags=["health"])
 
 
-class HealthResponse(Schema):
+class HealthResponse(ResponseSchema):
     """
     Response for the /health endpoint
 
@@ -22,8 +22,10 @@ class HealthResponse(Schema):
 
 
 @health_router.get(
+    by_alias=True,
     path="/full",
-    response=APIResponse[HealthResponse]
+    response=APIResponse[HealthResponse],
+    summary="Retrieves an indicator of system health."
 )
 async def get_app_health(request: APIRequest) -> APIResponse[HealthResponse]:
     """A simple health check to ensure the server is alive"""

@@ -47,14 +47,16 @@ async def _fetch_resource(
     if expected_status_code is not None:
         assert expected_status_code == response.status_code
     response_json = response.json()
+    assert "data" in response_json
+    assert "errorCode" in response_json
     if response.status_code >= 400:
-        assert "errorCode" in response_json
+        assert response_json["data"] is None
         return APIResponse(
             error_code=response_json["errorCode"],
             response={},
             status_code=response.status_code
         )
-    assert "data" in response_json
+    assert response_json["errorCode"] is None
     return APIResponse(
         response=response_json["data"],
         status_code=response.status_code
