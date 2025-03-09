@@ -8,7 +8,6 @@ IS_PRODUCTION = Env.get_env() == Env.PRODUCTION
 
 
 dda_api = NinjaAPI(
-    csrf=True,
     docs_url=None if IS_PRODUCTION else "/docs",  # Disable docs in production
     openapi_url=None if IS_PRODUCTION else "/openapi.json",
     title="DDA-API"

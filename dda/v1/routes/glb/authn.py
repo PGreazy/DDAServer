@@ -29,7 +29,8 @@ async def login_with_google(
     token_input: GoogleIdTokenDto
 ) -> tuple[int, APIResponse[UserSessionDto]]:
     try:
-        session_token = AuthNService.login_with_google(token_input.id_token)
+        session_token = await AuthNService.login_with_google(token_input.id_token)
+        logger.info(f"Created session for userId=${session_token.user.id}")
         return HTTPStatus.CREATED, APIResponse(
             data=UserSessionDto.from_orm(session_token)
         )

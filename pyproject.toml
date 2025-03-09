@@ -13,6 +13,7 @@ uvicorn = "^0.34.0"
 dj-database-url = "^2.3.0"
 psycopg2 = "^2.9.10"
 google-auth = "^2.38.0"
+requests = "^2.32.3"
 
 
 [tool.poetry.group.dev.dependencies]
@@ -39,6 +40,7 @@ disable_error_code = [
     "assignment",
     "var-annotated"
 ]
+plugins = ["mypy_django_plugin.main"]
 
 
 [tool.pytest.ini_options]
@@ -46,9 +48,6 @@ DJANGO_SETTINGS_MODULE = "tests.settings"
 python_files = ["test_*.py"]
 env = [
     "DJANGO_SECRET=test"
-]
-plugins = [
-    "mypy_django_plugin.main"
 ]
 
 

@@ -43,16 +43,6 @@ class User(AbstractDatedModel):
         null=False
     )
 
-    def get_session(self) -> Optional["SessionToken"]:
-        """
-        Convenience function to wrap returning the linked session for a user,
-        to help with type hinting elsewhere in the codebase.
-
-        Returns:
-            The current SessionToken for the user, if there is one.
-        """
-        return self.session  # type: ignore[attr-defined,no-any-return]
-
     def __str__(self) -> str:
         return f"{id}"
 
@@ -79,7 +69,6 @@ class SessionToken(models.Model):
     expires_at = models.DateField(default=_get_expiry_date, null=False)
     user = models.OneToOneField(
         User,
-        null=True,
         on_delete=models.CASCADE,
         related_name="session"
     )
@@ -94,4 +83,4 @@ class SessionToken(models.Model):
             True if the current time is greater than the expired time, False otherwise.
         """
         current_time = datetime.now(tz=timezone.utc)
-        return current_time >= self.expires_at  # type: ignore[no-any-return]
+        return current_time >= self.expires_at
