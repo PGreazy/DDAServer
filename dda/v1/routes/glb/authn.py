@@ -27,14 +27,14 @@ TOKEN_VALIDATION_FAILED_ERROR_CODE = "TokenValidationFailed"
 async def login_with_google(
     request: APIRequest,
     token_input: GoogleIdTokenDto
-):
+) -> tuple[int, APIResponse[UserSessionDto]]:
     try:
         session_token = AuthNService.login_with_google(token_input.id_token)
         return HTTPStatus.CREATED, APIResponse(
             data=UserSessionDto.from_orm(session_token)
         )
     except ExternalGoogleService.TokenValidationException:
-        logger.error(f"Failed to validate Google ID Token, cannot create session.", extra=request.state.dict())
+        logger.error("Failed to validate Google ID Token, cannot create session.", extra=request.state.dict())
         return HTTPStatus.BAD_REQUEST, APIResponse(
             error_code=TOKEN_VALIDATION_FAILED_ERROR_CODE
         )

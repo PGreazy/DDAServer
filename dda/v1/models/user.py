@@ -3,6 +3,7 @@ from datetime import datetime
 from datetime import timedelta
 from datetime import timezone
 from enum import Enum
+from typing import Optional
 from typing import TypeAlias
 from django.db import models
 from django.conf import settings
@@ -42,6 +43,16 @@ class User(AbstractDatedModel):
         null=False
     )
 
+    def get_session(self) -> Optional["SessionToken"]:
+        """
+        Convenience function to wrap returning the linked session for a user,
+        to help with type hinting elsewhere in the codebase.
+
+        Returns:
+            The current SessionToken for the user, if there is one.
+        """
+        return self.session  # type: ignore[attr-defined,no-any-return]
+
     def __str__(self) -> str:
         return f"{id}"
 
@@ -75,5 +86,12 @@ class SessionToken(models.Model):
 
     @property
     def is_expired(self) -> bool:
+        """
+        Convenience property to compute if this token is expired, based
+        on the current UTC time and the marked expiry time on the token.
+
+        Returns:
+            True if the current time is greater than the expired time, False otherwise.
+        """
         current_time = datetime.now(tz=timezone.utc)
-        return current_time >= self.expires_at
+        return current_time >= self.expires_at  # type: ignore[no-any-return]

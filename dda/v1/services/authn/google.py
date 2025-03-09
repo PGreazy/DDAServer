@@ -1,5 +1,6 @@
 import logging
 from abc import ABC
+from abc import abstractmethod
 from asgiref.sync import sync_to_async
 from django.conf import settings
 from google.auth.transport import requests
@@ -17,6 +18,7 @@ class IGoogleService(ABC):
     """
 
     @staticmethod
+    @abstractmethod
     async def get_user_profile(gid_token: str) -> UserCreateDto:
         """
         Validate the given id_token and construct the user creation
@@ -52,7 +54,7 @@ class ExternalGoogleService(IGoogleService):
             id_info = await sync_to_async(id_token.verify_oauth2_token)(
                 audience=settings.GOOGLE_CLIENT_ID,
                 id_token=gid_token,
-                request=requests.Request()
+                request=requests.Request()  # type: ignore[no-untyped-call]
             )
             return UserCreateDto(
                 email=id_info["email"],

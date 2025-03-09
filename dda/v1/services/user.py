@@ -73,8 +73,9 @@ class UserService:
         Returns:
             The new SessionToken.
         """
-        if user.session is not None:
-            await sync_to_async(user.session.delete)()
+        user_session = user.get_session()
+        if user_session is not None:
+            await sync_to_async(user_session.delete)()
         return await sync_to_async(SessionToken.objects.create)(
             user=user
         )
