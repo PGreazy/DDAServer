@@ -13,7 +13,7 @@ class AbstractDatedModel(models.Model):
     """
     created_at = models.DateField(auto_now_add=True)
     updated_at = models.DateField(auto_now=True)
-    deleted_at = models.DateField(default=None)
+    deleted_at = models.DateField(default=None, null=True)
 
     class Meta:
         abstract = True

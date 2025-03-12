@@ -29,6 +29,9 @@ class AuthNService:
         Returns:
             A refreshed user session, if it can be refreshed.
         """
+        # Because the user gets upserted if the token is found to be valid, then
+        # we can get away with not using a transaction if for whatever reason the token
+        # can't be refreshed. This helps to simplify the django async vs sync craziness.
         user_create_dto = await fetch_service.get_user_profile(id_token)
         user = await UserService.get_or_create_user(
             user_create_dto=user_create_dto,

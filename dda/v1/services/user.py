@@ -1,4 +1,3 @@
-from asgiref.sync import sync_to_async
 from dda.v1.models.user import SessionToken
 from dda.v1.models.user import User
 from dda.v1.models.user import UserSource
@@ -31,7 +30,7 @@ class UserService:
         Returns:
             The user that matches that email, or None if no such user exists.
         """
-        return await sync_to_async(User.objects.filter(email=email).first)()
+        return await User.objects.filter(email=email).afirst()
 
     @staticmethod
     async def get_or_create_user(
@@ -52,7 +51,7 @@ class UserService:
         if exiting_user is not None:
             return exiting_user
 
-        return await sync_to_async(User.objects.create)(
+        return await User.objects.acreate(
             email=user_create_dto.email,
             family_name=user_create_dto.family_name,
             given_name=user_create_dto.given_name,
@@ -73,9 +72,7 @@ class UserService:
         Returns:
             The new SessionToken.
         """
-        user_session = user.session
+        user_session = await user.get_session()
         if user_session is not None:
-            await sync_to_async(user_session.delete)()
-        return await sync_to_async(SessionToken.objects.create)(
-            user=user
-        )
+            await user_session.adelete()
+        return await SessionToken.objects.acreate(user=user)

@@ -1,4 +1,5 @@
 import uuid
+from asgiref.sync import sync_to_async
 from datetime import datetime
 from datetime import timedelta
 from datetime import timezone
@@ -36,12 +37,22 @@ class User(AbstractDatedModel):
     given_name = models.CharField(null=False)
     id = models.UUIDField(default=uuid.uuid4, primary_key=True)
     is_email_verified = models.BooleanField(default=False)
-    phone_number = models.CharField(unique=True)
-    profile_picture = models.CharField()
+    phone_number = models.CharField(null=True, unique=True)
+    profile_picture = models.CharField(null=True)
     source = models.CharField(
         choices=[(entry.name, entry.value) for entry in UserSource],
         null=False
     )
+
+    async def get_session(self) -> Optional["SessionToken"]:
+        """
+        Custom wrapper around the OneToOneField for a session to allow
+        getting a None back if the session does not exist.
+        """
+        try:
+            return await sync_to_async(lambda: self.session)()
+        except User.session.RelatedObjectDoesNotExist:
+            return None
 
     def __str__(self) -> str:
         return f"{id}"
@@ -69,6 +80,7 @@ class SessionToken(models.Model):
     expires_at = models.DateField(default=_get_expiry_date, null=False)
     user = models.OneToOneField(
         User,
+        null=True,
         on_delete=models.CASCADE,
         related_name="session"
     )

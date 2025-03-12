@@ -17,6 +17,7 @@ class APIResponse(BaseSchema, Generic[T]):
     Attributes:
         data (T): The data to be returned on successful operation of the API.
         error_code (str): A machine-understandable error code to be translated by the client.
+        error_message (str): A human-understandable error message a user can take action on.
 
     Example:
         >>> from ninja import Schema, Router
@@ -40,6 +41,7 @@ class APIResponse(BaseSchema, Generic[T]):
     """
     data: T | None = None
     error_code: str | None = None
+    error_message: str | None = None
 
 
 TransactionId: TypeAlias = uuid.UUID

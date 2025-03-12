@@ -18,6 +18,7 @@ def api_test_client() -> AsyncClient:
 async def _fetch_resource(
     request_method_caller: Callable[..., Any],  # No proper type for an ASGI response...
     path: str,
+    body: dict | None = None,
     expected_status_code: int | None = None,
     headers: HeaderDict | None = None,
     query_params: QueryParamDict | None = None
@@ -40,6 +41,8 @@ async def _fetch_resource(
         will be stripped and returned in APIResponse.
     """
     response = await request_method_caller(
+        data=body,
+        content_type="application/json",
         headers=headers if headers is not None else {},
         path=path,
         query_params=query_params
@@ -69,4 +72,13 @@ def api_get(api_test_client: AsyncClient) -> APICaller:
     return partial(
         _fetch_resource,
         api_test_client.get
+    )
+
+
+@pytest.fixture(scope="session")
+def api_post(api_test_client: AsyncClient) -> APICaller:
+    """Gets a callable that will POST ona given REST resource."""
+    return partial(
+        _fetch_resource,
+        api_test_client.post
     )
