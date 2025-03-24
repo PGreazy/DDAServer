@@ -318,6 +318,7 @@ files = [
 asgiref = "*"
 django = "*"
 django-stubs-ext = ">=5.1.3"
+mypy = {version = ">=1.12,<1.16", optional = true, markers = "extra == \"compatible-mypy\""}
 types-PyYAML = "*"
 typing-extensions = ">=4.11.0"
 
@@ -905,4 +906,4 @@ standard = ["colorama (>=0.4)", "httptools (>=0.6.3)", "python-dotenv (>=0.13)",
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.12"
-content-hash = "ce7285d7431e54564c67a6810f95e06f6a7f2688628e77f23e1db42d19535634"
+content-hash = "21d1542f56d0cab499a715e1eeb77fea9def041d423b52a2bb0902a6174327bc"

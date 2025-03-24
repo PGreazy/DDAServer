@@ -4,6 +4,8 @@ from datetime import datetime
 from datetime import timedelta
 from datetime import timezone
 from enum import Enum
+from typing import ClassVar
+from typing import no_type_check
 from typing import Optional
 from typing import TypeAlias
 from django.db import models
@@ -44,6 +46,9 @@ class User(AbstractDatedModel):
         null=False
     )
 
+    objects: ClassVar[models.Manager["User"]]
+
+    @no_type_check
     async def get_session(self) -> Optional["SessionToken"]:
         """
         Custom wrapper around the OneToOneField for a session to allow
@@ -84,6 +89,8 @@ class SessionToken(models.Model):
         on_delete=models.CASCADE,
         related_name="session"
     )
+
+    objects: ClassVar[models.Manager["SessionToken"]]
 
     @property
     def is_expired(self) -> bool:

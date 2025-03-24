@@ -47,9 +47,9 @@ class UserService:
         Return:
             The new user that was created, or the existing user if it already existed.
         """
-        exiting_user = await UserService.get_user_by_email(user_create_dto.email)
-        if exiting_user is not None:
-            return exiting_user
+        existing_user = await UserService.get_user_by_email(user_create_dto.email)
+        if existing_user is not None:
+            return existing_user
 
         return await User.objects.acreate(
             email=user_create_dto.email,

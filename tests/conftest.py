@@ -18,7 +18,7 @@ def api_test_client() -> AsyncClient:
 async def _fetch_resource(
     request_method_caller: Callable[..., Any],  # No proper type for an ASGI response...
     path: str,
-    body: dict | None = None,
+    body: dict[str, Any] | None = None,
     expected_status_code: int | None = None,
     headers: HeaderDict | None = None,
     query_params: QueryParamDict | None = None

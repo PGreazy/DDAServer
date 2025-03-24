@@ -1,6 +1,5 @@
 import logging
-from abc import ABC
-from abc import abstractmethod
+from typing import Protocol
 from asgiref.sync import sync_to_async
 from django.conf import settings
 from google.auth.transport import requests
@@ -11,14 +10,13 @@ from dda.v1.schemas.user import UserCreateDto
 logger = logging.getLogger("dda")
 
 
-class IGoogleService(ABC):
+class IGoogleService(Protocol):
     """
     Interface defining behavior for any class that provides
     the ability to interact with Google APIs.
     """
 
     @staticmethod
-    @abstractmethod
     async def get_user_profile(gid_token: str) -> UserCreateDto:
         """
         Validate the given id_token and construct the user creation

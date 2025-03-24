@@ -5,6 +5,7 @@ from ninja import NinjaAPI
 from ninja.errors import ValidationError
 from dda.v1.routes.http import APIRequest
 from dda.v1.routes.http import APIResponse
+from dda.v1.services.authn.google import ExternalGoogleService
 
 logger = logging.getLogger("dda")
 
@@ -76,6 +77,33 @@ def handle_validation_errors(
         APIResponse(
             error_code="ValidationError",
             error_message=f"Validation failed at field ${error_location[-1]}"
+        ).model_dump(by_alias=True),
+        status=HTTPStatus.BAD_REQUEST
+    )
+
+
+def handle_google_token_validation_errors(
+    request: APIRequest,
+    _exc: ExternalGoogleService.TokenValidationException,
+    api: NinjaAPI
+) -> HttpResponse:
+    """
+    Exception handler to catch validation failures for Google ID tokens.
+
+    Args:
+        request (APIRequest): The originating request.
+        _exc (Exception): The source exception, unused.
+        api (NinjaAPI): The root API object serving this request.
+
+    Returns:
+        An HttpResponse containing the error information.
+    """
+    logger.error("Failed to validate Google ID Token, cannot create session.", extra=request.state.dict())
+    return api.create_response(
+        request,
+        APIResponse(
+            error_code="InvalidToken",
+            error_message="Input token could not be validated"
         ).model_dump(by_alias=True),
         status=HTTPStatus.BAD_REQUEST
     )
