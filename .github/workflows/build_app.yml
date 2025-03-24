@@ -51,10 +51,6 @@ jobs:
       - name: Install Dependencies
         run: poetry install --with dev,test
 
-      - name: Set up database connection URL
-        run: |
-          echo "DATABASE_URL=postgres://$DB_USER:$DB_PASSWORD@localhost:5432/$DB_NAME" >> $GITHUB_ENV
-
       - name: Check Style
         run: poetry run ruff check .
 
@@ -62,7 +58,8 @@ jobs:
         run: poetry run mypy dda/ tests/
 
       - name: Run Tests
-        run: poetry run pytest --cov=dda --cov-branch --cov-report=xml -p no:warnings
+        run: |
+          DATABASE_URL=postgres://$DB_USER:$DB_PASSWORD@localhost:5432/$DB_NAME poetry run pytest --cov=dda --cov-branch --cov-report=xml -p no:warnings
 
       - name: Upload Coverage
         uses: codecov/codecov-action@v5
