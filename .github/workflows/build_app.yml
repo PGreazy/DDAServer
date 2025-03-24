@@ -12,6 +12,28 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
+    env:
+      DJANGO_SECRET: "test_secret"
+      DJANGO_ENV: "LOCAL"
+      DB_USER: "test_dda_admin"
+      DB_PASSWORD: "test_dda_password"
+      DB_NAME: "dda"
+
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_DB: "$DB_NAME"
+          POSTGRES_USER: "$DB_USER"
+          POSTGRES_PASSWORD: "$DB_PASSWORD"
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd="pg_isready -U $DB_USER -d $DB_NAME"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -28,6 +50,10 @@ jobs:
 
       - name: Install Dependencies
         run: poetry install --with dev,test
+
+      - name: Set up database connection URL
+        run: |
+          echo "DATABASE_URL=postgres://$DB_USER:$DB_PASSWORD@localhost:5432/$DB_NAME" >> $GITHUB_ENV
 
       - name: Check Style
         run: poetry run ruff check .
