@@ -73,3 +73,8 @@ async def test_google_login_should_return_201_when_token_is_created(api_post: AP
         )
         assert session_token_response.response["token"] is not None
         assert len(session_token_response.response["token"]) > 0
+        assert session_token_response.response["user"]["email"] == TEST_OAUTH_RESPONSE_USER.email
+        assert session_token_response.response["user"]["familyName"] == TEST_OAUTH_RESPONSE_USER.family_name
+        assert session_token_response.response["user"]["givenName"] == TEST_OAUTH_RESPONSE_USER.given_name
+        assert session_token_response.response["user"]["phoneNumber"] == TEST_OAUTH_RESPONSE_USER.phone_number
+        assert session_token_response.response["user"]["profilePicture"] == TEST_OAUTH_RESPONSE_USER.profile_picture
