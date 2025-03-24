@@ -59,7 +59,9 @@ jobs:
 
       - name: Run Tests
         run: |
-          DATABASE_URL=postgres://$DB_USER:$DB_PASSWORD@localhost:5432/$DB_NAME poetry run pytest --cov=dda --cov-branch --cov-report=xml -p no:warnings
+          poetry run pytest --cov=dda --cov-branch --cov-report=xml -p no:warnings
+        with:
+          DATABASE_URL: postgres://${{ env.DB_USER }}:${{ env.DB_PASSWORD }}@localhost:5432/${{ env.DB_NAME }}
 
       - name: Upload Coverage
         uses: codecov/codecov-action@v5
