@@ -15,8 +15,8 @@ jobs:
     env:
       DJANGO_SECRET: "test_secret"
       DJANGO_ENV: "LOCAL"
-      DB_USER: "test_dda_admin"
-      DB_PASSWORD: "test_dda_password"
+      DB_USER: "admin"
+      DB_PASSWORD: "admin"
       DB_NAME: "dda_db"
 
     services:
@@ -51,14 +51,6 @@ jobs:
       - name: Install Dependencies
         run: poetry install --with dev,test
 
-      - name: Set Database URL
-        env:
-          DB_USER: ${{ env.DB_USER }}
-          DB_PASSWORD: ${{ env.DB_PASSWORD }}
-          DB_NAME: ${{ env.DB_NAME }}
-        run: |
-          echo "DATABASE_URL=postgres://$DB_USER:$DB_PASSWORD@localhost:5432/$DB_NAME" >> $GITHUB_ENV
-
       - name: Check Style
         run: poetry run ruff check .
 
@@ -67,7 +59,6 @@ jobs:
 
       - name: Run Tests
         run: |
-          echo ${{ env.DATABASE_URL }}
           poetry run pytest tests/ --cov=dda --cov-branch --cov-report=xml -p no:warnings
 
       - name: Upload Coverage
