@@ -57,9 +57,11 @@ jobs:
       - name: Check Types
         run: poetry run mypy dda/ tests/
 
+      - name: Set Database URL
+        run: |
+          echo "DATABASE_URL=postgres://$DB_USER:$DB_PASSWORD@localhost:5432/$DB_NAME" >> $GITHUB_ENV
+
       - name: Run Tests
-        with:
-          DATABASE_URL: postgres://${{ env.DB_USER }}:${{ env.DB_PASSWORD }}@localhost:5432/${{ env.DB_NAME }}
         run: |
           poetry run pytest --cov=dda --cov-branch --cov-report=xml -p no:warnings
 
