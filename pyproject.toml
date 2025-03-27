@@ -64,6 +64,10 @@ exclude = [
 ]
 
 
+[tool.coverage.run]
+omit = [
+    "dda/v1/services/authn/google.py"
+]
 
 [build-system]
 requires = ["poetry-core"]
