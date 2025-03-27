@@ -18,6 +18,7 @@ def api_test_client() -> AsyncClient:
 async def _fetch_resource(
     request_method_caller: Callable[..., Any],  # No proper type for an ASGI response...
     path: str,
+    body: dict[str, Any] | None = None,
     expected_status_code: int | None = None,
     headers: HeaderDict | None = None,
     query_params: QueryParamDict | None = None
@@ -40,6 +41,8 @@ async def _fetch_resource(
         will be stripped and returned in APIResponse.
     """
     response = await request_method_caller(
+        data=body,
+        content_type="application/json",
         headers=headers if headers is not None else {},
         path=path,
         query_params=query_params
@@ -47,14 +50,16 @@ async def _fetch_resource(
     if expected_status_code is not None:
         assert expected_status_code == response.status_code
     response_json = response.json()
+    assert "data" in response_json
+    assert "errorCode" in response_json
     if response.status_code >= 400:
-        assert "errorCode" in response_json
+        assert response_json["data"] is None
         return APIResponse(
             error_code=response_json["errorCode"],
             response={},
             status_code=response.status_code
         )
-    assert "data" in response_json
+    assert response_json["errorCode"] is None
     return APIResponse(
         response=response_json["data"],
         status_code=response.status_code
@@ -67,4 +72,13 @@ def api_get(api_test_client: AsyncClient) -> APICaller:
     return partial(
         _fetch_resource,
         api_test_client.get
+    )
+
+
+@pytest.fixture(scope="session")
+def api_post(api_test_client: AsyncClient) -> APICaller:
+    """Gets a callable that will POST ona given REST resource."""
+    return partial(
+        _fetch_resource,
+        api_test_client.post
     )

@@ -3,20 +3,21 @@ from typing import Generic
 from typing import TypeAlias
 from typing import TypeVar
 from django.http import HttpRequest
-from ninja import Field
 from ninja import Schema
+from dda.v1.schemas.base import BaseSchema
 
 
 T = TypeVar("T")
 
 
-class APIResponse(Schema, Generic[T]):
+class APIResponse(BaseSchema, Generic[T]):
     """
     A generic response type to be applied anywhere in this application.
 
     Attributes:
         data (T): The data to be returned on successful operation of the API.
         error_code (str): A machine-understandable error code to be translated by the client.
+        error_message (str): A human-understandable error message a user can take action on.
 
     Example:
         >>> from ninja import Schema, Router
@@ -38,8 +39,9 @@ class APIResponse(Schema, Generic[T]):
         ...    # Some work...
         ...    pass
     """
-    data: T
-    error_code: str | None = Field(alias="errorCode", default=None)
+    data: T | None = None
+    error_code: str | None = None
+    error_message: str | None = None
 
 
 TransactionId: TypeAlias = uuid.UUID

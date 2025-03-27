@@ -12,6 +12,28 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
+    env:
+      DJANGO_SECRET: "test_secret"
+      DJANGO_ENV: "LOCAL"
+      DB_USER: "admin"
+      DB_PASSWORD: "admin"
+      DB_NAME: "dda_db"
+
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_DB: ${{ env.DB_NAME }}
+          POSTGRES_USER: ${{ env.DB_USER }}
+          POSTGRES_PASSWORD: ${{ env.DB_PASSWORD }}
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd="pg_isready -U $POSTGRES_USER -d $POSTGRES_DB"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -36,7 +58,8 @@ jobs:
         run: poetry run mypy dda/ tests/
 
       - name: Run Tests
-        run: poetry run pytest --cov=dda --cov-branch --cov-report=xml -p no:warnings
+        run: |
+          poetry run pytest tests/ --cov=dda --cov-branch --cov-report=xml -p no:warnings
 
       - name: Upload Coverage
         uses: codecov/codecov-action@v5
