@@ -58,6 +58,10 @@ jobs:
         run: poetry run mypy dda/ tests/
 
       - name: Set Database URL
+        env:
+          DB_USER: ${{ env.DB_USER }}
+          DB_PASSWORD: ${{ env.DB_PASSWORD }}
+          DB_NAME: ${{ env.DB_NAME }}
         run: |
           echo "DATABASE_URL=postgres://$DB_USER:$DB_PASSWORD@localhost:5432/$DB_NAME" >> $GITHUB_ENV
 
