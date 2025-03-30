@@ -1,12 +1,15 @@
 from dda.v1.schemas.base import BaseSchema
 
 
-class GoogleIdTokenDto(BaseSchema):
+class GoogleTokenExchangeDto(BaseSchema):
     """
-    An input schema taking only a Google OAuth ID token, that should
-    be validated and decrypted in order to create a user.
+    An input schema taking the result of a Google authorization code request.
 
     Attributes:
-        id_token (str): JWT containing Google user profile data.
+        authorization_code (str): A valid Google authorization code.
+        code_verifier (str): The code verifier used to make the original authorization request.
+        redirect_uri (str): The original redirect_uri used in the authorization code request.
     """
-    id_token: str
+    authorization_code: str
+    code_verifier: str
+    redirect_uri: str

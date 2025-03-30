@@ -10,6 +10,9 @@ from dda.v1.schemas.user import UserCreateDto
 logger = logging.getLogger("dda")
 
 
+_GOOGLE_TOKEN_EXCHANGE_URL = "https://oauth2.googleapis.com/token"
+
+
 class IGoogleService(Protocol):
     """
     Interface defining behavior for any class that provides
@@ -32,6 +35,26 @@ class IGoogleService(Protocol):
         """
         ...
 
+    @staticmethod
+    async def exchange_auth_token_for_id_token(
+        authorization_code: str,
+        code_verifier: str,
+        redirect_uri: str
+    ) -> str:
+        """
+        Exchange an authorization code provided by the client (assumes the client
+        has already requested it) for an id_token, which can later be turned into a user profile.
+
+        Args:
+            authorization_code (str): Authorization code provided by Google.
+            code_verifier (str): Code verifier used to make the original authorization request.
+            redirect_uri (str): The redirect URI used in the original code request
+
+        Returns:
+            A Google-provided id_token to be turned into a user profile.
+        """
+        ...
+
 
 class ExternalGoogleService(IGoogleService):
     """
@@ -44,6 +67,13 @@ class ExternalGoogleService(IGoogleService):
         Wrapper Exception to make it easier to differentiate
         for callers of get_user_profile that the token failed to
         validate vs some other downstream exception.
+        """
+
+    class TokenExchangeException(Exception):
+        """
+        Wrapper exception for when we fail to call the Google
+        OAuth APIs to exchange an authorization token for an
+        ID token.
         """
 
     @staticmethod
@@ -64,3 +94,33 @@ class ExternalGoogleService(IGoogleService):
         except Exception as e:
             logger.debug(f"Failure to validate Google token: {e}")
             raise ExternalGoogleService.TokenValidationException()
+
+    @staticmethod
+    async def exchange_auth_token_for_id_token(
+        authorization_code: str,
+        code_verifier: str,
+        redirect_uri: str
+    ) -> str:
+        token_request_data = {
+            "code": authorization_code,
+            "client_id": settings.GOOGLE_CLIENT_ID,
+            "client_secret": settings.GOOGLE_CLIENT_SECRET,
+            "code_verifier": code_verifier,
+            "redirect_uri": redirect_uri,
+            "grant_type": "authorization_code"
+        }
+
+        request = requests.Request()
+        response = await sync_to_async(request.session.post)(
+            _GOOGLE_TOKEN_EXCHANGE_URL,
+            data=token_request_data,
+            headers={
+                "Content-Type": "application/x-www-form-urlencoded"
+            }
+        )
+        if response.status_code >= 300:
+            logger.debug(f"Failure to request token exchange, got status code: {response.status_code}")
+            raise ExternalGoogleService.TokenExchangeException()
+
+        response_json = response.json()
+        return response_json["id_token"]

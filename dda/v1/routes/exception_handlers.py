@@ -107,3 +107,30 @@ def handle_google_token_validation_errors(
         ).model_dump(by_alias=True),
         status=HTTPStatus.BAD_REQUEST
     )
+
+
+def handle_google_code_exchange_errors(
+    request: APIRequest,
+    _exc: ExternalGoogleService.TokenExchangeException,
+    api: NinjaAPI
+) -> HttpResponse:
+    """
+    Exception handler to catch token exchange errors during Google's OAuth flow.
+
+    Args:
+        request (APIRequest): The originating request.
+        _exc (Exception): The source exception, unused.
+        api (NinjaAPI): The root API object serving this request.
+
+    Returns:
+        An HttpResponse containing the error information.
+    """
+    logger.error("Failed to exchange authorization code for ID token, cannot request Google profile.", extra=request.state.dict())
+    return api.create_response(
+        request,
+        APIResponse(
+            error_code="TokenExchangeFailed",
+            error_message="Could not exchange authorization code for ID token"
+        ).model_dump(by_alias=True),
+        status=HTTPStatus.BAD_REQUEST
+    )

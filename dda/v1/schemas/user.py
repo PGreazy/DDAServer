@@ -6,7 +6,7 @@ from dda.v1.schemas.base import BaseSchema
 
 _PHONE_REGEX = r"^\+?[1-9]\d{1,14}$"
 _EMAIL_REGEX = r"^[^\s@]+@[^\s@]+\.[^\s@]+$"
-_URL_REGEX = r"^https://(?:[a-z0-9\-]+\.)+[a-z]{2,6}(?:/[^/#?]+)+\.(?:jpe?g|png)$"
+_URL_REGEX = r"^https://(?:[a-z0-9\-]+\.)+[a-z]{2,6}(?:/[^/#?]+)+(?:\.(?:jpe?g|png))?$"
 
 
 class UserDto(BaseSchema):
