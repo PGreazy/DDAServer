@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "ddaserver"
+name = "dda"
 version = "0.0.1"
 description = "Server component for DDA"
 authors = ["Austin Graham <austingraham731@gmail.com>"]
@@ -19,7 +19,7 @@ requests = "^2.32.3"
 [tool.poetry.group.dev.dependencies]
 mypy = "^1.15.0"
 ruff = "^0.9.9"
-django-stubs = {extras = ["compatible-mypy"], version = "^5.1.3"}
+django-stubs = { extras = ["compatible-mypy"], version = "^5.1.3" }
 
 
 [tool.poetry.group.test.dependencies]
@@ -36,10 +36,7 @@ python_version = "3.12"
 ignore_missing_imports = true
 strict = true
 disallow_untyped_defs = true
-disable_error_code = [
-    "assignment",
-    "var-annotated"
-]
+disable_error_code = ["assignment", "var-annotated"]
 plugins = ["mypy_django_plugin.main"]
 
 
@@ -49,7 +46,7 @@ python_files = ["test_*.py"]
 env = [
     "DJANGO_SECRET=test",
     "DJANGO_ENV=LOCAL",
-    "DATABASE_URL=postgres://admin:admin@localhost:5432/dda_db"
+    "DATABASE_URL=postgres://admin:admin@localhost:5432/dda_db",
 ]
 addopts = "--reuse-db"
 
@@ -59,15 +56,11 @@ django_settings_module = "dda.settings"
 
 
 [tool.ruff]
-exclude = [
-    "tests/settings.py"
-]
+exclude = ["tests/settings.py"]
 
 
 [tool.coverage.run]
-omit = [
-    "dda/v1/services/authn/google.py"
-]
+omit = ["dda/v1/services/authn/google.py"]
 
 [build-system]
 requires = ["poetry-core"]
