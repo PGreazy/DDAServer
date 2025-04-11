@@ -1,4 +1,5 @@
 import logging
+from typing import cast
 from typing import Protocol
 from asgiref.sync import sync_to_async
 from django.conf import settings
@@ -110,7 +111,7 @@ class ExternalGoogleService(IGoogleService):
             "grant_type": "authorization_code"
         }
 
-        request = requests.Request()
+        request = requests.Request()  # type: ignore
         response = await sync_to_async(request.session.post)(
             _GOOGLE_TOKEN_EXCHANGE_URL,
             data=token_request_data,
@@ -123,4 +124,4 @@ class ExternalGoogleService(IGoogleService):
             raise ExternalGoogleService.TokenExchangeException()
 
         response_json = response.json()
-        return response_json["id_token"]
+        return cast(str, response_json["id_token"])

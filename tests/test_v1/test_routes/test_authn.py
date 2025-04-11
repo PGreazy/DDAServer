@@ -6,6 +6,7 @@ from typing import Coroutine
 from typing import TypeAlias
 from unittest.mock import patch
 from dda.v1.models.user import SessionToken
+from dda.v1.schemas.authn import GoogleTokenExchangeDto
 from dda.v1.schemas.user import UserCreateDto
 from dda.v1.services.authn import AuthNService
 from dda.v1.services.authn.google import ExternalGoogleService
@@ -29,7 +30,7 @@ TEST_CODE_BODY = {
 }
 
 
-MockedLoginCallable: TypeAlias = Callable[[str], Coroutine[Any, Any, SessionToken]]
+MockedLoginCallable: TypeAlias = Callable[[GoogleTokenExchangeDto], Coroutine[Any, Any, SessionToken]]
 
 class MockGoogleService(IGoogleService):
 
@@ -49,8 +50,10 @@ class MockGoogleService(IGoogleService):
 @pytest.fixture
 def mocked_google_oauth() -> MockedLoginCallable:
     original_login_with_google = AuthNService.login_with_google
-    async def login_with_google_with_mock_fetcher(id_token: str) -> SessionToken:
-        return await original_login_with_google(id_token, MockGoogleService)
+    async def login_with_google_with_mock_fetcher(
+        token_exchange_dto: GoogleTokenExchangeDto
+    ) -> SessionToken:
+        return await original_login_with_google(token_exchange_dto, MockGoogleService)
     return login_with_google_with_mock_fetcher
 
 
@@ -75,7 +78,7 @@ async def test_google_login_should_return_400_if_attributes_are_missing(api_post
 @pytest.mark.asyncio
 @pytest.mark.django_db
 async def test_google_login_should_return_400_when_token_cannot_be_verified(api_post: APICaller) -> None:
-    async def login_with_google_with_exception(*args) -> SessionToken:
+    async def login_with_google_with_exception(token_exchange_dto: GoogleTokenExchangeDto) -> SessionToken:
         raise ExternalGoogleService.TokenValidationException()
 
     with patch.object(AuthNService, "login_with_google", new=login_with_google_with_exception):
@@ -90,7 +93,7 @@ async def test_google_login_should_return_400_when_token_cannot_be_verified(api_
 @pytest.mark.asyncio
 @pytest.mark.django_db
 async def test_google_login_should_return_400_when_code_cannot_be_exchanged(api_post: APICaller) -> None:
-    async def login_with_google_with_exception(*args) -> SessionToken:
+    async def login_with_google_with_exception(token_exchange_dto: GoogleTokenExchangeDto) -> SessionToken:
         raise ExternalGoogleService.TokenExchangeException()
 
     with patch.object(AuthNService, "login_with_google", new=login_with_google_with_exception):
