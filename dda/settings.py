@@ -48,8 +48,10 @@ LOGGING = {
 }
 
 
+# This order is specific
 MIDDLEWARE = [
-    "dda.v1.routes.middleware.transaction.transaction_middleware"
+    "dda.v1.routes.middleware.transaction.transaction_middleware",
+    "dda.v1.routes.middleware.authentication.authentication_middleware"
 ]
 
 

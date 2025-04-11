@@ -56,8 +56,7 @@ class APIRequestState(Schema):
         tid (TransactionId): A unique UUID for the request.
         user_id (str): The user ID currently authenticated, if there is one.
     """
-    tid: TransactionId
-    # Update type when I can
+    tid: TransactionId | None = None
     user_id: str | None = None
 
 

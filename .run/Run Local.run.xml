@@ -12,6 +12,7 @@
       <env name="GOOGLE_CLIENT_ID" value="&lt;&gt;" />
       <env name="GOOGLE_CLIENT_SECRET" value="&lt;&gt;" />
       <env name="PYTHONUNBUFFERED" value="1" />
+      <env name="SESSION_LENGTH_MINUTES" value="2000" />
     </envs>
     <option name="SDK_HOME" value="" />
     <option name="SDK_NAME" value="Poetry (DDAServer)" />
