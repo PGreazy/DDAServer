@@ -25,7 +25,7 @@ TOKEN_VALIDATION_FAILED_ERROR_CODE = "TokenValidationFailed"
     },
     summary="From a Google OAuth ID Token, create or refresh a user session."
 )
-async def login_with_google_test(
+async def login_with_google(
     request: APIRequest,
     code_input: GoogleTokenExchangeDto
 ) -> tuple[int, APIResponse[UserSessionDto]]:
