@@ -6,6 +6,7 @@ from typing import Coroutine
 from typing import TypeAlias
 from unittest.mock import patch
 from dda.v1.models.user import SessionToken
+from dda.v1.schemas.authn import GoogleTokenExchangeDto
 from dda.v1.schemas.user import UserCreateDto
 from dda.v1.services.authn import AuthNService
 from dda.v1.services.authn.google import ExternalGoogleService
@@ -22,12 +23,14 @@ TEST_OAUTH_RESPONSE_USER = UserCreateDto(
 )
 
 
-TEST_TOKEN_BODY = {
-    "idToken": "sometoken"
+TEST_CODE_BODY = {
+    "authorizationCode": "someCode",
+    "codeVerifier": "verifier",
+    "redirectUri": "http://localhost"
 }
 
 
-MockedLoginCallable: TypeAlias = Callable[[str], Coroutine[Any, Any, SessionToken]]
+MockedLoginCallable: TypeAlias = Callable[[GoogleTokenExchangeDto], Coroutine[Any, Any, SessionToken]]
 
 class MockGoogleService(IGoogleService):
 
@@ -35,20 +38,38 @@ class MockGoogleService(IGoogleService):
     async def get_user_profile(gid_token: str) -> UserCreateDto:
         return TEST_OAUTH_RESPONSE_USER
 
+    @staticmethod
+    async def exchange_auth_token_for_id_token(
+        authorization_code: str,
+        code_verifier: str,
+        redirect_uri: str
+    ) -> str:
+        return "test_token"
+
 
 @pytest.fixture
 def mocked_google_oauth() -> MockedLoginCallable:
     original_login_with_google = AuthNService.login_with_google
-    async def login_with_google_with_mock_fetcher(id_token: str) -> SessionToken:
-        return await original_login_with_google(id_token, MockGoogleService)
+    async def login_with_google_with_mock_fetcher(
+        token_exchange_dto: GoogleTokenExchangeDto
+    ) -> SessionToken:
+        return await original_login_with_google(token_exchange_dto, MockGoogleService)
     return login_with_google_with_mock_fetcher
 
 
 @pytest.mark.asyncio
-async def test_google_login_should_return_400_if_attributes_are_missing(api_post: APICaller) -> None:
+@pytest.mark.parametrize(
+    "test_request_body",
+    [
+        {"codeVerifier": "test", "redirect_uri": "test"},
+        {"authorization_code": "test", "redirect_uri": "test"},
+        {"authorization_code": "test", "codeVerifier": "test"}
+    ]
+)
+async def test_google_login_should_return_400_if_attributes_are_missing(api_post: APICaller, test_request_body: dict[str, Any]) -> None:
     session_token_response = await api_post(
         "/v1/glb/auth/google",
-        body={},
+        body=test_request_body,
         expected_status_code=HTTPStatus.BAD_REQUEST
     )
     assert session_token_response.error_code == "ValidationError"
@@ -57,20 +78,31 @@ async def test_google_login_should_return_400_if_attributes_are_missing(api_post
 @pytest.mark.asyncio
 @pytest.mark.django_db
 async def test_google_login_should_return_400_when_token_cannot_be_verified(api_post: APICaller) -> None:
-    async def login_with_google_with_exception(id_token: str) -> SessionToken:
+    async def login_with_google_with_exception(token_exchange_dto: GoogleTokenExchangeDto) -> SessionToken:
         raise ExternalGoogleService.TokenValidationException()
-
-    test_token_body = {
-        "idToken": "some-token"
-    }
 
     with patch.object(AuthNService, "login_with_google", new=login_with_google_with_exception):
         session_token_response = await api_post(
             "/v1/glb/auth/google",
-            body=test_token_body,
+            body=TEST_CODE_BODY,
             expected_status_code=HTTPStatus.BAD_REQUEST
         )
         assert session_token_response.error_code == "InvalidToken"
+
+
+@pytest.mark.asyncio
+@pytest.mark.django_db
+async def test_google_login_should_return_400_when_code_cannot_be_exchanged(api_post: APICaller) -> None:
+    async def login_with_google_with_exception(token_exchange_dto: GoogleTokenExchangeDto) -> SessionToken:
+        raise ExternalGoogleService.TokenExchangeException()
+
+    with patch.object(AuthNService, "login_with_google", new=login_with_google_with_exception):
+        session_token_response = await api_post(
+            "/v1/glb/auth/google",
+            body=TEST_CODE_BODY,
+            expected_status_code=HTTPStatus.BAD_REQUEST
+        )
+        assert session_token_response.error_code == "TokenExchangeFailed"
 
 
 @pytest.mark.asyncio
@@ -82,7 +114,7 @@ async def test_google_login_should_return_201_when_token_is_created(
     with patch.object(AuthNService, "login_with_google", new=mocked_google_oauth):
         session_token_response = await api_post(
             "/v1/glb/auth/google",
-            body=TEST_TOKEN_BODY,
+            body=TEST_CODE_BODY,
             expected_status_code=HTTPStatus.CREATED
         )
         assert session_token_response.response["token"] is not None
@@ -104,7 +136,7 @@ async def test_google_login_should_return_201_with_replaced_session_when_session
         # Get a fresh session
         session_token_response = await api_post(
             "/v1/glb/auth/google",
-            body=TEST_TOKEN_BODY,
+            body=TEST_CODE_BODY,
             expected_status_code=HTTPStatus.CREATED
         )
         assert session_token_response.response["token"] is not None
@@ -113,7 +145,7 @@ async def test_google_login_should_return_201_with_replaced_session_when_session
         # Now try and replace it
         session_token_response = await api_post(
             "/v1/glb/auth/google",
-            body=TEST_TOKEN_BODY,
+            body=TEST_CODE_BODY,
             expected_status_code=HTTPStatus.CREATED
         )
         assert session_token_response.response["token"] is not None
