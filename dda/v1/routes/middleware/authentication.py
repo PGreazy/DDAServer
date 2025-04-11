@@ -1,4 +1,5 @@
 import logging
+from asgiref.sync import sync_to_async
 from django.http import HttpRequest
 from django.http import HttpResponse
 from django.utils.decorators import sync_and_async_middleware
@@ -16,11 +17,11 @@ def authentication_middleware(get_response: ResponseProcessor[HttpRequest]) -> R
     async def middleware(request: APIRequest) -> HttpResponse:
         authorization_header = request.headers.get("Authorization", "")
         bearer_values = authorization_header.split()
-        if len(bearer_values) == 2 and bearer_values[0] != "Bearer":
+        if len(bearer_values) == 2 and bearer_values[0] == "Bearer":
             token = bearer_values[-1]
             session = await UserService.get_current_session_user(token)
             if session is not None:
-                request.state.user_id = session.user.id
+                request.state.user = await sync_to_async(lambda: session.user)()
             else:
                 logger.warning(f"No valid session was found for token, treating request as unauthenticated.", extra=request.state.dict())
         else:

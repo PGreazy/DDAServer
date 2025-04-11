@@ -82,7 +82,7 @@ class SessionToken(models.Model):
         user (User): The user associated with this token.
     """
     token = models.CharField(default=_generate_session_token, null=False, primary_key=True)
-    expires_at = models.DateField(default=_get_expiry_date, null=False)
+    expires_at = models.DateTimeField(default=_get_expiry_date, null=False)
     user = models.OneToOneField(
         User,
         null=True,

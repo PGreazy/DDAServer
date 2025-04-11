@@ -1,5 +1,3 @@
-from http.cookiejar import cut_port_re
-
 from dda.v1.models.user import SessionToken
 from dda.v1.models.user import User
 from dda.v1.models.user import UserSource
