@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "ddaserver"
+name = "dda"
 version = "0.0.1"
 description = "Server component for DDA"
 authors = ["Austin Graham <austingraham731@gmail.com>"]
