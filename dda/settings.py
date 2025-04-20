@@ -3,6 +3,9 @@ import dj_database_url
 from dda.env import Env
 
 
+# TODO: Allowed hosts?
+
+
 SECRET_KEY = os.environ["DJANGO_SECRET"]
 DEBUG = os.environ.get("DEBUG", None) == "True"
 ROOT_URLCONF = "dda.urls"
@@ -50,6 +53,7 @@ LOGGING = {
 
 # This order is specific
 MIDDLEWARE = [
+    "django.middleware.security.SecurityMiddleware",
     "dda.v1.routes.middleware.transaction.transaction_middleware",
     "dda.v1.routes.middleware.authentication.authentication_middleware"
 ]
