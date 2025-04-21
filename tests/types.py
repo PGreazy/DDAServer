@@ -1,8 +1,10 @@
+from dataclasses import dataclass
 from typing import Any
 from typing import Callable
 from typing import Coroutine
 from typing import TypeAlias
 from ninja import Schema
+from dda.v1.schemas.user import UserSessionDto
 
 
 HeaderDict: TypeAlias = dict[str, str]
@@ -25,3 +27,18 @@ class APIResponse(Schema):
 
 
 APICaller: TypeAlias = Callable[..., Coroutine[Any, Any, APIResponse]]
+
+
+@dataclass
+class AuthedAPICaller:
+    """
+    A small wrapper for an authed APICaller such the caller
+    has access to both the authenticated user and the caller function
+    itself, for convenience.
+
+    Attributes:
+        session (UserSessionDto): The newly authenticated user.
+        caller (APICaller): APICaller instance to call an API in a test.
+    """
+    session: UserSessionDto
+    caller: APICaller
