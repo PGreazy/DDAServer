@@ -64,8 +64,8 @@ class APIRequestState(Schema):
     tid: TransactionId | None = None
     user: User | None = Field(default=None, exclude=True)
 
-    @computed_field
     @property
+    @computed_field
     def user_id(self) -> UserId | None:
         if self.user is not None:
             return self.user.id
