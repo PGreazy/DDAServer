@@ -49,7 +49,7 @@ async def get_currently_authenticated_user(
 ) -> APIResponse[UserDto]:
     if request.state.user is None:
         raise UnauthenticatedError()
-    logger.info(f"User requested /me, their profile is being returned.", extra=request.state.dict())
+    logger.info("User requested /me, their profile is being returned.", extra=request.state.dict())
     return APIResponse(
         data=UserDto.from_orm(request.state.user)
     )

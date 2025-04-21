@@ -23,8 +23,8 @@ def authentication_middleware(get_response: ResponseProcessor[HttpRequest]) -> R
             if session is not None:
                 request.state.user = await sync_to_async(lambda: session.user)()
             else:
-                logger.warning(f"No valid session was found for token, treating request as unauthenticated.", extra=request.state.dict())
+                logger.warning("No valid session was found for token, treating request as unauthenticated.", extra=request.state.dict())
         else:
-            logger.warning(f"Authorization header was invalid or mis-formatted. treating request as unauthenticated.", extra=request.state.dict())
+            logger.warning("Authorization header was invalid or mis-formatted. treating request as unauthenticated.", extra=request.state.dict())
         return await get_response(request)
     return middleware
