@@ -11,6 +11,7 @@ class AbstractDatedModel(models.Model):
         updated_at (datetime): When the model was last updated.
         deleted_at (datetime): When the model was deleted.
     """
+
     created_at = models.DateField(auto_now_add=True)
     updated_at = models.DateField(auto_now=True)
     deleted_at = models.DateField(default=None, null=True)

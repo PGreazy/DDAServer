@@ -15,6 +15,7 @@ class UserDto(BaseSchema):
     returned back to the client, including the ID and all information
     that is safe to expose externally, assuming the caller is authorized.
     """
+
     email: str
     family_name: str
     given_name: str
@@ -28,6 +29,7 @@ class UserCreateDto(BaseSchema):
     Schema that represents the information (and validations) needed
     to create a new user.
     """
+
     email: str = Field(pattern=_EMAIL_REGEX)
     family_name: str = Field(min_length=1)
     given_name: str = Field(min_length=1)
@@ -42,6 +44,7 @@ class UserSessionDto(BaseSchema):
     be returned back to a caller when a user has been newly
     authenticated or session refreshed.
     """
+
     token: str
     expires_at: datetime
     user: UserDto

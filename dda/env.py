@@ -7,6 +7,7 @@ class Env(Enum):
     Small enum dictating whether we are currently
     in either a production or local environment
     """
+
     PRODUCTION = "PROD"
     LOCAL = "LOCAL"
 

@@ -10,4 +10,6 @@ from django.http import HttpResponse
 ChildRequestType = TypeVar("ChildRequestType", bound=HttpRequest)
 
 
-ResponseProcessor: TypeAlias = Callable[[ChildRequestType], Coroutine[Any, Any, HttpResponse]]
+ResponseProcessor: TypeAlias = Callable[
+    [ChildRequestType], Coroutine[Any, Any, HttpResponse]
+]

@@ -10,14 +10,6 @@ class UserService:
     to easily interact with users within the database.
     """
 
-    class UserAlreadyExistsException(Exception):
-        """
-        Wrapper exception to represent when a user with the given
-        email already exists.
-        """
-        def __init__(self, email: str):
-            self.email = email
-
     @staticmethod
     async def get_user_by_email(email: str) -> User | None:
         """
@@ -34,8 +26,7 @@ class UserService:
 
     @staticmethod
     async def get_or_create_user(
-        user_create_dto: UserCreateDto,
-        source: UserSource
+        user_create_dto: UserCreateDto, source: UserSource
     ) -> User:
         """
         Create a new user, or returns an existing one.
@@ -57,7 +48,7 @@ class UserService:
             given_name=user_create_dto.given_name,
             is_email_verified=user_create_dto.is_email_verified,
             profile_picture=user_create_dto.profile_picture,
-            source=source
+            source=source,
         )
 
     @staticmethod
@@ -76,3 +67,21 @@ class UserService:
         if user_session is not None:
             await user_session.adelete()
         return await SessionToken.objects.acreate(user=user)
+
+    @staticmethod
+    async def get_current_session_user(token: str) -> SessionToken | None:
+        """
+        Get the session object tied to the current token, if there is any.
+
+        Args:
+            token (str): Token found in the Authorization header.
+
+        Returns:
+            The current SessionToken object, or None if no session exists
+            or the active session has expired.
+        """
+        current_session = await SessionToken.objects.filter(token=token).afirst()
+        if current_session is not None and current_session.is_expired:
+            await current_session.adelete()
+            return None
+        return current_session

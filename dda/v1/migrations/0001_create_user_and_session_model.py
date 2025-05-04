@@ -7,38 +7,59 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     initial = True
 
-    dependencies = [
-    ]
+    dependencies = []
 
     operations = [
         migrations.CreateModel(
-            name='User',
+            name="User",
             fields=[
-                ('created_at', models.DateField(auto_now_add=True)),
-                ('updated_at', models.DateField(auto_now=True)),
-                ('deleted_at', models.DateField(default=None, null=True)),
-                ('email', models.CharField(unique=True)),
-                ('family_name', models.CharField()),
-                ('given_name', models.CharField()),
-                ('id', models.UUIDField(default=uuid.uuid4, primary_key=True, serialize=False)),
-                ('is_email_verified', models.BooleanField(default=False)),
-                ('phone_number', models.CharField(null=True, unique=True)),
-                ('profile_picture', models.CharField(null=True)),
-                ('source', models.CharField(choices=[('GOOGLE', 'google')])),
+                ("created_at", models.DateField(auto_now_add=True)),
+                ("updated_at", models.DateField(auto_now=True)),
+                ("deleted_at", models.DateField(default=None, null=True)),
+                ("email", models.CharField(unique=True)),
+                ("family_name", models.CharField()),
+                ("given_name", models.CharField()),
+                (
+                    "id",
+                    models.UUIDField(
+                        default=uuid.uuid4, primary_key=True, serialize=False
+                    ),
+                ),
+                ("is_email_verified", models.BooleanField(default=False)),
+                ("phone_number", models.CharField(null=True, unique=True)),
+                ("profile_picture", models.CharField(null=True)),
+                ("source", models.CharField(choices=[("GOOGLE", "google")])),
             ],
             options={
-                'abstract': False,
+                "abstract": False,
             },
         ),
         migrations.CreateModel(
-            name='SessionToken',
+            name="SessionToken",
             fields=[
-                ('token', models.CharField(default=dda.v1.models.user._generate_session_token, primary_key=True, serialize=False)),
-                ('expires_at', models.DateField(default=dda.v1.models.user._get_expiry_date)),
-                ('user', models.OneToOneField(null=True, on_delete=django.db.models.deletion.CASCADE, related_name='session', to='v1.user')),
+                (
+                    "token",
+                    models.CharField(
+                        default=dda.v1.models.user._generate_session_token,
+                        primary_key=True,
+                        serialize=False,
+                    ),
+                ),
+                (
+                    "expires_at",
+                    models.DateField(default=dda.v1.models.user._get_expiry_date),
+                ),
+                (
+                    "user",
+                    models.OneToOneField(
+                        null=True,
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="session",
+                        to="v1.user",
+                    ),
+                ),
             ],
         ),
     ]

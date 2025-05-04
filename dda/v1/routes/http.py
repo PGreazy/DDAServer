@@ -3,7 +3,12 @@ from typing import Generic
 from typing import TypeAlias
 from typing import TypeVar
 from django.http import HttpRequest
+from ninja import Field
 from ninja import Schema
+from pydantic import computed_field
+from pydantic import ConfigDict
+from dda.v1.models.user import User
+from dda.v1.models.user import UserId
 from dda.v1.schemas.base import BaseSchema
 
 
@@ -39,6 +44,7 @@ class APIResponse(BaseSchema, Generic[T]):
         ...    # Some work...
         ...    pass
     """
+
     data: T | None = None
     error_code: str | None = None
     error_message: str | None = None
@@ -54,11 +60,20 @@ class APIRequestState(Schema):
 
     Attributes:
         tid (TransactionId): A unique UUID for the request.
-        user_id (str): The user ID currently authenticated, if there is one.
+        user (User): The user currently authenticated, if there is one.
     """
-    tid: TransactionId
-    # Update type when I can
-    user_id: str | None = None
+
+    tid: TransactionId | None = None
+    user: User | None = Field(default=None, exclude=True)
+
+    @property
+    @computed_field
+    def user_id(self) -> UserId | None:
+        if self.user is not None:
+            return self.user.id
+        return None
+
+    model_config = ConfigDict(arbitrary_types_allowed=True)
 
 
 class APIRequest(HttpRequest):
@@ -70,4 +85,5 @@ class APIRequest(HttpRequest):
     Attributes:
         state (APIRequestState): Custom state attached to a request.
     """
+
     state: APIRequestState
