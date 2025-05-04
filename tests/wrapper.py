@@ -34,7 +34,7 @@ async def authed_request(caller: APICaller) -> AuthedAPICaller:
 
     """
     session = await _authenticated_session()
-    def _wrap_authorization_header(path: str, headers: HeaderDict | None = None, **kwargs) -> Coroutine[Any, Any, APIResponse]:
+    def _wrap_authorization_header(path: str, headers: HeaderDict | None = None, **kwargs: Any) -> Coroutine[Any, Any, APIResponse]:
         headers = {
             **(headers if headers is not None else {}),
             "Authorization": f"Bearer {session.token}"
