@@ -10,15 +10,6 @@ class UserService:
     to easily interact with users within the database.
     """
 
-    class UserAlreadyExistsException(Exception):
-        """
-        Wrapper exception to represent when a user with the given
-        email already exists.
-        """
-
-        def __init__(self, email: str):
-            self.email = email
-
     @staticmethod
     async def get_user_by_email(email: str) -> User | None:
         """
