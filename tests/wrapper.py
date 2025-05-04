@@ -12,6 +12,13 @@ from tests.types import HeaderDict
 
 
 async def _authenticated_session() -> UserSessionDto:
+    """
+    Creates a user and a valid session token for that user for the
+    purposes of testing.
+
+    Returns:
+        A valid user session used for testing.
+    """
     new_user = await User.objects.acreate(
         email=f"dda_dev_test_{uuid.uuid4()}@email.com",
         family_name="Test",
@@ -29,10 +36,10 @@ async def authed_request(caller: APICaller) -> AuthedAPICaller:
     authentication and authentication requests.
 
     Args:
-        caller:
+        caller (APICaller): Function to execute a test API request.
 
     Returns:
-
+        A wrapped APICaller that will inject a valid user session.
     """
     session = await _authenticated_session()
 
