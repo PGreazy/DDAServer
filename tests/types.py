@@ -11,6 +11,7 @@ HeaderDict: TypeAlias = dict[str, str]
 QueryParamDict: TypeAlias = dict[str, str]
 JSON: TypeAlias = dict[str, Any]
 
+
 class APIResponse(Schema):
     """
     A small wrapper around an API response, to assist
@@ -21,6 +22,7 @@ class APIResponse(Schema):
         status_code (int): HTTP status code of response
         error_code (str): String error code, if errors are present
     """
+
     response: JSON
     status_code: int
     error_code: str | None = None
@@ -40,5 +42,6 @@ class AuthedAPICaller:
         session (UserSessionDto): The newly authenticated user.
         caller (APICaller): APICaller instance to call an API in a test.
     """
+
     session: UserSessionDto
     caller: APICaller

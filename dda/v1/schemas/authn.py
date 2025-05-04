@@ -10,6 +10,7 @@ class GoogleTokenExchangeDto(BaseSchema):
         code_verifier (str): The code verifier used to make the original authorization request.
         redirect_uri (str): The original redirect_uri used in the authorization code request.
     """
+
     authorization_code: str
     code_verifier: str
     redirect_uri: str

@@ -16,7 +16,7 @@ class AuthNService:
     @staticmethod
     async def login_with_google(
         token_exchange_dto: GoogleTokenExchangeDto,
-        fetch_service: IGoogleService = ExternalGoogleService
+        fetch_service: IGoogleService = ExternalGoogleService,
     ) -> SessionToken:
         """
         Performs a session creation with a user incoming from Google with
@@ -36,11 +36,10 @@ class AuthNService:
         id_token = await fetch_service.exchange_auth_token_for_id_token(
             authorization_code=token_exchange_dto.authorization_code,
             code_verifier=token_exchange_dto.code_verifier,
-            redirect_uri=token_exchange_dto.redirect_uri
+            redirect_uri=token_exchange_dto.redirect_uri,
         )
         user_create_dto = await fetch_service.get_user_profile(id_token)
         user = await UserService.get_or_create_user(
-            user_create_dto=user_create_dto,
-            source=UserSource.GOOGLE
+            user_create_dto=user_create_dto, source=UserSource.GOOGLE
         )
         return await UserService.refresh_session_token(user)

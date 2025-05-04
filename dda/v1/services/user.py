@@ -15,6 +15,7 @@ class UserService:
         Wrapper exception to represent when a user with the given
         email already exists.
         """
+
         def __init__(self, email: str):
             self.email = email
 
@@ -34,8 +35,7 @@ class UserService:
 
     @staticmethod
     async def get_or_create_user(
-        user_create_dto: UserCreateDto,
-        source: UserSource
+        user_create_dto: UserCreateDto, source: UserSource
     ) -> User:
         """
         Create a new user, or returns an existing one.
@@ -57,7 +57,7 @@ class UserService:
             given_name=user_create_dto.given_name,
             is_email_verified=user_create_dto.is_email_verified,
             profile_picture=user_create_dto.profile_picture,
-            source=source
+            source=source,
         )
 
     @staticmethod

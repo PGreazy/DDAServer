@@ -55,7 +55,7 @@ LOGGING = {
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "dda.v1.routes.middleware.transaction.transaction_middleware",
-    "dda.v1.routes.middleware.authentication.authentication_middleware"
+    "dda.v1.routes.middleware.authentication.authentication_middleware",
 ]
 
 
@@ -65,23 +65,15 @@ TEMPLATES = [
         "DIRS": [],
         "APP_DIRS": True,
         "OPTIONS": {
-            "context_processors": [
-                "django.template.context_processors.debug"
-            ],
+            "context_processors": ["django.template.context_processors.debug"],
         },
     },
 ]
 
 
 DATABASES = {
-    "default": dj_database_url.config(
-        conn_max_age=600,
-        conn_health_checks=True
-    )
+    "default": dj_database_url.config(conn_max_age=600, conn_health_checks=True)
 }
 
 
-INSTALLED_APPS = [
-    "django.contrib.contenttypes",
-    "dda.v1"
-]
+INSTALLED_APPS = ["django.contrib.contenttypes", "dda.v1"]

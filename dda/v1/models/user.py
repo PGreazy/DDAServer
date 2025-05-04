@@ -34,6 +34,7 @@ class User(AbstractDatedModel):
         profile_picture (str): A link to the user's profile photo, if present.
         source (str): Where the original user signup came from.
     """
+
     email = models.CharField(null=False, unique=True)
     family_name = models.CharField(null=False)
     given_name = models.CharField(null=False)
@@ -42,8 +43,7 @@ class User(AbstractDatedModel):
     phone_number = models.CharField(null=True, unique=True)
     profile_picture = models.CharField(null=True)
     source = models.CharField(
-        choices=[(entry.name, entry.value) for entry in UserSource],
-        null=False
+        choices=[(entry.name, entry.value) for entry in UserSource], null=False
     )
 
     objects: ClassVar[models.Manager["User"]]
@@ -68,7 +68,9 @@ def _generate_session_token() -> str:
 
 
 def _get_expiry_date() -> datetime:
-    return datetime.now(tz=timezone.utc) + timedelta(minutes=settings.SESSION_LENGTH_MINUTES)
+    return datetime.now(tz=timezone.utc) + timedelta(
+        minutes=settings.SESSION_LENGTH_MINUTES
+    )
 
 
 class SessionToken(models.Model):
@@ -81,13 +83,13 @@ class SessionToken(models.Model):
         expires_at (datetime): The time when this token expires.
         user (User): The user associated with this token.
     """
-    token = models.CharField(default=_generate_session_token, null=False, primary_key=True)
+
+    token = models.CharField(
+        default=_generate_session_token, null=False, primary_key=True
+    )
     expires_at = models.DateTimeField(default=_get_expiry_date, null=False)
     user = models.OneToOneField(
-        User,
-        null=True,
-        on_delete=models.CASCADE,
-        related_name="session"
+        User, null=True, on_delete=models.CASCADE, related_name="session"
     )
 
     objects: ClassVar[models.Manager["SessionToken"]]

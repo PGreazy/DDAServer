@@ -1,3 +1,4 @@
+import uuid
 from typing import Any
 from typing import Coroutine
 from dda.v1.models.user import SessionToken
@@ -12,11 +13,11 @@ from tests.types import HeaderDict
 
 async def _authenticated_session() -> UserSessionDto:
     new_user = await User.objects.acreate(
-        email="dda_dev_test@email.com",
+        email=f"dda_dev_test_{uuid.uuid4()}@email.com",
         family_name="Test",
         given_name="Dev",
         is_email_verified=True,
-        source=UserSource.GOOGLE
+        source=UserSource.GOOGLE,
     )
     new_token = await SessionToken.objects.acreate(user=new_user)
     return UserSessionDto.from_orm(new_token)
@@ -34,14 +35,14 @@ async def authed_request(caller: APICaller) -> AuthedAPICaller:
 
     """
     session = await _authenticated_session()
-    def _wrap_authorization_header(path: str, headers: HeaderDict | None = None, **kwargs: Any) -> Coroutine[Any, Any, APIResponse]:
+
+    def _wrap_authorization_header(
+        path: str, headers: HeaderDict | None = None, **kwargs: Any
+    ) -> Coroutine[Any, Any, APIResponse]:
         headers = {
             **(headers if headers is not None else {}),
-            "Authorization": f"Bearer {session.token}"
+            "Authorization": f"Bearer {session.token}",
         }
         return caller(path, headers=headers, **kwargs)
 
-    return AuthedAPICaller(
-        session=session,
-        caller=_wrap_authorization_header
-    )
+    return AuthedAPICaller(session=session, caller=_wrap_authorization_header)

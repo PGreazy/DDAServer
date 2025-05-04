@@ -21,7 +21,7 @@ async def _fetch_resource(
     body: dict[str, Any] | None = None,
     expected_status_code: int | None = None,
     headers: HeaderDict | None = None,
-    query_params: QueryParamDict | None = None
+    query_params: QueryParamDict | None = None,
 ) -> APIResponse:
     """
     Given a method to execute an HTTP request, make the request, parse
@@ -45,7 +45,7 @@ async def _fetch_resource(
         content_type="application/json",
         headers=headers if headers is not None else {},
         path=path,
-        query_params=query_params
+        query_params=query_params,
     )
     if expected_status_code is not None:
         assert expected_status_code == response.status_code
@@ -57,28 +57,19 @@ async def _fetch_resource(
         return APIResponse(
             error_code=response_json["errorCode"],
             response={},
-            status_code=response.status_code
+            status_code=response.status_code,
         )
     assert response_json["errorCode"] is None
-    return APIResponse(
-        response=response_json["data"],
-        status_code=response.status_code
-    )
+    return APIResponse(response=response_json["data"], status_code=response.status_code)
 
 
 @pytest.fixture(scope="session")
 def api_get(api_test_client: AsyncClient) -> APICaller:
     """Gets a callable that will GET on a given REST resource."""
-    return partial(
-        _fetch_resource,
-        api_test_client.get
-    )
+    return partial(_fetch_resource, api_test_client.get)
 
 
 @pytest.fixture(scope="session")
 def api_post(api_test_client: AsyncClient) -> APICaller:
     """Gets a callable that will POST ona given REST resource."""
-    return partial(
-        _fetch_resource,
-        api_test_client.post
-    )
+    return partial(_fetch_resource, api_test_client.post)

@@ -18,6 +18,7 @@ class HealthDto(BaseSchema):
     Attributes:
         status (str): Is the server up?
     """
+
     status: str
 
 
@@ -25,7 +26,7 @@ class HealthDto(BaseSchema):
     by_alias=True,
     path="/full",
     response=APIResponse[HealthDto],
-    summary="Retrieves an indicator of system health."
+    summary="Retrieves an indicator of system health.",
 )
 async def get_app_health(request: APIRequest) -> APIResponse[HealthDto]:
     """A simple health check to ensure the server is alive"""

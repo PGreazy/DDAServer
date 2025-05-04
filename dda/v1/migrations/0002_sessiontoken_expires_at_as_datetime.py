@@ -5,15 +5,14 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('v1', '0001_create_user_and_session_model'),
+        ("v1", "0001_create_user_and_session_model"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='sessiontoken',
-            name='expires_at',
+            model_name="sessiontoken",
+            name="expires_at",
             field=models.DateTimeField(default=dda.v1.models.user._get_expiry_date),
         ),
     ]

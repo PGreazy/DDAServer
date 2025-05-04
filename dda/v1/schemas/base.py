@@ -11,10 +11,11 @@ class BaseSchema(Schema):
     attributes can be found at:
     https://docs.pydantic.dev/2.10/api/config/#pydantic.config.ConfigDict
     """
+
     model_config = ConfigDict(
         alias_generator=to_camel,
         populate_by_name=True,
         str_strip_whitespace=True,
         use_enum_values=True,
-        validate_assignment=True
+        validate_assignment=True,
     )

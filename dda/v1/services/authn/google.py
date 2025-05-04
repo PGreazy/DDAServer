@@ -38,9 +38,7 @@ class IGoogleService(Protocol):
 
     @staticmethod
     async def exchange_auth_token_for_id_token(
-        authorization_code: str,
-        code_verifier: str,
-        redirect_uri: str
+        authorization_code: str, code_verifier: str, redirect_uri: str
     ) -> str:
         """
         Exchange an authorization code provided by the client (assumes the client
@@ -83,14 +81,14 @@ class ExternalGoogleService(IGoogleService):
             id_info = await sync_to_async(id_token.verify_oauth2_token)(
                 audience=settings.GOOGLE_CLIENT_ID,
                 id_token=gid_token,
-                request=requests.Request()  # type: ignore[no-untyped-call]
+                request=requests.Request(),  # type: ignore[no-untyped-call]
             )
             return UserCreateDto(
                 email=id_info["email"],
                 family_name=id_info["family_name"],
                 given_name=id_info["given_name"],
                 is_email_verified=id_info["email_verified"],
-                profile_picture=id_info.get("picture", None)
+                profile_picture=id_info.get("picture", None),
             )
         except Exception as e:
             logger.debug(f"Failure to validate Google token: {e}")
@@ -98,9 +96,7 @@ class ExternalGoogleService(IGoogleService):
 
     @staticmethod
     async def exchange_auth_token_for_id_token(
-        authorization_code: str,
-        code_verifier: str,
-        redirect_uri: str
+        authorization_code: str, code_verifier: str, redirect_uri: str
     ) -> str:
         token_request_data = {
             "code": authorization_code,
@@ -108,19 +104,19 @@ class ExternalGoogleService(IGoogleService):
             "client_secret": settings.GOOGLE_CLIENT_SECRET,
             "code_verifier": code_verifier,
             "redirect_uri": redirect_uri,
-            "grant_type": "authorization_code"
+            "grant_type": "authorization_code",
         }
 
         request = requests.Request()  # type: ignore
         response = await sync_to_async(request.session.post)(
             _GOOGLE_TOKEN_EXCHANGE_URL,
             data=token_request_data,
-            headers={
-                "Content-Type": "application/x-www-form-urlencoded"
-            }
+            headers={"Content-Type": "application/x-www-form-urlencoded"},
         )
         if response.status_code >= 300:
-            logger.debug(f"Failure to request token exchange, got status code: {response.status_code}")
+            logger.debug(
+                f"Failure to request token exchange, got status code: {response.status_code}"
+            )
             raise ExternalGoogleService.TokenExchangeException()
 
         response_json = response.json()

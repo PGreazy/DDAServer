@@ -13,8 +13,11 @@ logger = logging.getLogger("dda")
 
 
 @sync_and_async_middleware
-def transaction_middleware(get_response: ResponseProcessor[HttpRequest]) -> ResponseProcessor[APIRequest]:
+def transaction_middleware(
+    get_response: ResponseProcessor[HttpRequest],
+) -> ResponseProcessor[APIRequest]:
     """Middleware to initialize a transaction and time a request."""
+
     async def middleware(request: APIRequest) -> HttpResponse:
         request.state = APIRequestState(tid=uuid.uuid4())
         logger.info("REQUEST START", extra=request.state.dict())
@@ -28,4 +31,5 @@ def transaction_middleware(get_response: ResponseProcessor[HttpRequest]) -> Resp
         logger.info(f"Total request time {total_time_ms}ms", extra=request.state.dict())
         response.headers["X-DDA-TID"] = str(request.state.tid)
         return response
+
     return middleware

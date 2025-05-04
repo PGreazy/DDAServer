@@ -44,6 +44,7 @@ class APIResponse(BaseSchema, Generic[T]):
         ...    # Some work...
         ...    pass
     """
+
     data: T | None = None
     error_code: str | None = None
     error_message: str | None = None
@@ -61,6 +62,7 @@ class APIRequestState(Schema):
         tid (TransactionId): A unique UUID for the request.
         user (User): The user currently authenticated, if there is one.
     """
+
     tid: TransactionId | None = None
     user: User | None = Field(default=None, exclude=True)
 
@@ -71,10 +73,7 @@ class APIRequestState(Schema):
             return self.user.id
         return None
 
-    model_config = ConfigDict(
-        arbitrary_types_allowed=True
-    )
-
+    model_config = ConfigDict(arbitrary_types_allowed=True)
 
 
 class APIRequest(HttpRequest):
@@ -86,4 +85,5 @@ class APIRequest(HttpRequest):
     Attributes:
         state (APIRequestState): Custom state attached to a request.
     """
+
     state: APIRequestState
