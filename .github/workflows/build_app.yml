@@ -1,4 +1,4 @@
-name: Build App
+name: Build and Push App
 
 on:
   push:
@@ -7,6 +7,12 @@ on:
   pull_request:
     branches:
       - master
+
+
+permissions:
+  id-token: write
+  contents: read
+
 
 jobs:
   build:
@@ -65,3 +71,41 @@ jobs:
         uses: codecov/codecov-action@v5
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
+
+  push:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Determine image tag
+        id: image-tag
+        run: |
+          if [[ "${{ github.event_name }}" == "pull_request" ]]; then
+            TAG_BRANCH="${{ github.head_ref }}"
+          else
+            TAG_BRANCH="${{ github.ref_name }}"
+          fi
+          SHORT_SHA="${GITHUB_SHA::7}"
+          echo "IMAGE_TAG=${TAG_BRANCH}-${SHORT_SHA}" >> $GITHUB_OUTPUT
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::977098986372:role/GitHubActionsECRAccessRole
+          aws-region: us-west-2
+
+      - name: Login to Amazon ECR
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: ./app.DOCKERFILE
+          push: true
+          tags: 977098986372.dkr.ecr.us-west-2.amazonaws.com/dda_backend:${{ steps.image-tag.outputs.IMAGE_TAG }}
