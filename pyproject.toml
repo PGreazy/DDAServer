@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "dda"
-version = "0.0.1"
+version = "0.1.0"
 description = "Server component for DDA"
 authors = ["Austin Graham <austingraham731@gmail.com>"]
 readme = "README.md"
