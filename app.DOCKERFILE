@@ -23,4 +23,4 @@ COPY --from=builder /app /app
 
 WORKDIR /app
 
-CMD ["uvicorn", "dda.asgi:application", "--host", "0.0.0.0", "--port", "9000", "--lifespan", "off"]
+CMD ["python", "-m", "uvicorn", "dda.asgi:application", "--host", "0.0.0.0", "--port", "9000", "--lifespan", "off"]
