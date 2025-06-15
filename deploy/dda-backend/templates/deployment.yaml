@@ -45,6 +45,8 @@ spec:
                 secretKeyRef:
                   name: "django-secret"
                   key: django_secret_token
+            - name: "DJANGO_ENV"
+              value: "{{ .Values.env.DJANGO_ENV }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           ports:
             - name: http

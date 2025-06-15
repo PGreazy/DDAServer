@@ -1,8 +1,10 @@
 image:
   repository: 977098986372.dkr.ecr.us-west-2.amazonaws.com/dda_backend
   pullPolicy: IfNotPresent
-  tag: "helm-chart-a3f313a"
+  tag: "helm-chart-85a4227"
 
+# Need to figure out how this works in a production
+# environment...
 imagePullSecrets:
   - name: ecr-creds
 nameOverride: ""
@@ -48,3 +50,6 @@ nodeSelector: {}
 tolerations: []
 
 affinity: {}
+
+env:
+  DJANGO_ENV: LOCAL
