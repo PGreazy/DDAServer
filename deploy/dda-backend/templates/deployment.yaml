@@ -39,6 +39,12 @@ spec:
             {{- toYaml . | nindent 12 }}
           {{- end }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          env:
+            - name: "DJANGO_SECRET"
+              valueFrom:
+                secretKeyRef:
+                  name: "django-secret"
+                  key: django_secret_token
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           ports:
             - name: http

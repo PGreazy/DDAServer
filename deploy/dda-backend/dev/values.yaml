@@ -1,7 +1,7 @@
 image:
   repository: 977098986372.dkr.ecr.us-west-2.amazonaws.com/dda_backend
   pullPolicy: IfNotPresent
-  tag: "v0.1.0"
+  tag: "helm-chart-a3f313a"
 
 imagePullSecrets:
   - name: ecr-creds
