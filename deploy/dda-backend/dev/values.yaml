@@ -1,7 +1,7 @@
 image:
   repository: 977098986372.dkr.ecr.us-west-2.amazonaws.com/dda_backend
   pullPolicy: IfNotPresent
-  tag: "helm-chart-85a4227"
+  tag: "master-7ec1452"
 
 # Need to figure out how this works in a production
 # environment...
@@ -24,8 +24,6 @@ service:
 ingress:
   enabled: false
 
-resources: {}
-
 livenessProbe:
   httpGet:
     path: /v1/glb/health/full
@@ -41,15 +39,11 @@ autoscaling:
   maxReplicas: 5
   targetCPUUtilizationPercentage: 80
 
-volumes: []
-
-volumeMounts: []
-
-nodeSelector: {}
-
-tolerations: []
-
-affinity: {}
-
 env:
   DJANGO_ENV: LOCAL
+
+pooler:
+  db_host: "host.docker.internal"
+  db_port: 5432
+  db_user: admin
+  db_name: dda_db

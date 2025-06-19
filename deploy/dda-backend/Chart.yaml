@@ -1,7 +1,5 @@
 apiVersion: v2
 name: dda-backend
-description: A Helm chart for Kubernetes
+description: Helm Chart for the DDA Backend Django service.
 type: application
 version: 0.1.0
-# Need to link to the docker image tag....
-appVersion: "0.1.0"
