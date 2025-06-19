@@ -27,25 +27,30 @@ SESSION_LENGTH_MINUTES = int(os.environ.get("SESSION_LENGTH_MINUTES", 15))
 
 LOGGING = {
     "version": 1,
-    "disable_existing_loggers": False,
+    "disable_existing_loggers": True,
     "formatters": {
-        "basic": {
-            "format": "[{asctime}] level={levelname} tid={tid} user_id={user_id} message={message}",
+        "json": {
+            '()': 'pythonjsonlogger.jsonlogger.JsonFormatter',
+            "format": "{asctime} {levelname} {tid} {user_id} {message}",
             "style": "{",
+            "defaults": {"user_id": None}
         }
     },
     "handlers": {
         "console": {
             "level": get_log_level(),
             "class": "logging.StreamHandler",
-            "formatter": "basic",
-        }
+            "formatter": "json",
+        },
+        "null": {
+            'class': 'logging.NullHandler',
+        },
     },
     "loggers": {
         "dda": {
             "handlers": ["console"],
             "level": get_log_level(),
-            "propagate": True,
+            "propagate": False,
         }
     },
 }
