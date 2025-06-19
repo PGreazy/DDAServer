@@ -41,10 +41,7 @@ LOGGING = {
             "level": get_log_level(),
             "class": "logging.StreamHandler",
             "formatter": "json",
-        },
-        "null": {
-            'class': 'logging.NullHandler',
-        },
+        }
     },
     "loggers": {
         "dda": {
