@@ -27,12 +27,12 @@ def authentication_middleware(
                 request.state.user = await sync_to_async(lambda: session.user)()
             else:
                 logger.warning(
-                    "No valid session was found for token, treating request as unauthenticated.",
+                    "No valid session was found for token, Treating request as unauthenticated.",
                     extra=request.state.dict(),
                 )
         else:
             logger.warning(
-                "Authorization header was invalid or mis-formatted. treating request as unauthenticated.",
+                "Authorization header was invalid or mis-formatted. Treating request as unauthenticated.",
                 extra=request.state.dict(),
             )
         return await get_response(request)
