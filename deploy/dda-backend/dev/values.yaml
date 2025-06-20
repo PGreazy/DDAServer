@@ -1,7 +1,7 @@
 image:
   repository: 977098986372.dkr.ecr.us-west-2.amazonaws.com/dda_backend
   pullPolicy: IfNotPresent
-  tag: "master-7ec1452"
+  tag: "improved-helm-config-baa34aa"
 
 # Need to figure out how this works in a production
 # environment...
@@ -42,8 +42,11 @@ autoscaling:
 env:
   DJANGO_ENV: LOCAL
 
+migration:
+  enabled: true
+
 pooler:
-  db_host: "host.docker.internal"
+  db_host: "host.minikube.internal"
   db_port: 5432
   db_user: admin
   db_name: dda_db

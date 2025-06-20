@@ -81,30 +81,37 @@ spec:
           volumeMounts:
             {{- toYaml . | nindent 12 }}
           {{- end }}
+        # TODO: Specify a user for the app to connect to pgbouncer,
+        # then use a system app user for pgbouncer <-> remote database
         - name: pgbouncer
-            image: bitnami/pgbouncer:latest
-            env:
-              - name: POSTGRESQL_HOST
-                value: {{ .Values.pooler.db_host }}
-              - name: POSTGRESQL_PORT
-                value: {{ .Values.pooler.db_port }}
-              - name: POSTGRESQL_USERNAME
-                value: {{ .Values.pooler.db_user }}
-              - name: POSTGRESQL_PASSWORD
-                valueFrom:
-                  secretKeyRef:
-                    name: db-secret
-                    key: password
-              - name: POSTGRESQL_DATABASE
-                value: {{ .Values.pooler.db_name }}
-              - name: POOL_MODE
-                value: "transaction"
-              - name: PGBOUNCER_MAX_CLIENT_CONN
-                value: {{ .Values.pooler.max_client_conn | default 100 }}
-              - name: PGBOUNCER_DEFAULT_POOL_SIZE
-                value: {{ .Values.pooler.default_pool_size | default 20 }}
-            ports:
-              - containerPort: 6432
+          image: bitnami/pgbouncer:latest
+          env:
+            - name: POSTGRESQL_HOST
+              value: "{{ .Values.pooler.db_host }}"
+            - name: POSTGRESQL_PORT
+              value: "{{ .Values.pooler.db_port }}"
+            - name: POSTGRESQL_USERNAME
+              value: "{{ .Values.pooler.db_user }}"
+            - name: POSTGRESQL_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: db-secret
+                  key: password
+            - name: POSTGRESQL_DATABASE
+              value: "{{ .Values.pooler.db_name }}"
+            - name: PGBOUNCER_POOL_MODE
+              value: "transaction"
+            - name: PGBOUNCER_MAX_CLIENT_CONN
+              value: "{{ .Values.pooler.max_client_conn | default 100 }}"
+            - name: PGBOUNCER_DEFAULT_POOL_SIZE
+              value: "{{ .Values.pooler.default_pool_size | default 20 }}"
+          readinessProbe:
+            tcpSocket:
+              port: 6432
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          ports:
+            - containerPort: 6432
       {{- with .Values.volumes }}
       volumes:
         {{- toYaml . | nindent 8 }}
