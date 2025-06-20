@@ -107,7 +107,7 @@ spec:
                 secretKeyRef:
                   name: db-secret
                   key: password
-            - name: POSTGRESQL_DATABASE
+            - name: PGBOUNCER_DATABASE
               value: "{{ .Values.pooler.db_name }}"
             - name: PGBOUNCER_POOL_MODE
               value: "transaction"

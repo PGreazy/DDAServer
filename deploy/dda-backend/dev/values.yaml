@@ -17,9 +17,8 @@ serviceAccount:
   name: "helm-auto-service-account"
 
 service:
-  type: NodePort
+  type: LoadBalancer
   port: 9000
-  nodePort: 32100
 
 ingress:
   enabled: false
