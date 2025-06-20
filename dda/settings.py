@@ -1,6 +1,7 @@
 import os
 import dj_database_url
 from dda.env import Env
+from dda.env import set_database_url
 
 
 # TODO: Allowed hosts?
@@ -72,7 +73,7 @@ TEMPLATES = [
     },
 ]
 
-
+set_database_url()
 DATABASES = {
     "default": dj_database_url.config(conn_max_age=600, conn_health_checks=True)
 }

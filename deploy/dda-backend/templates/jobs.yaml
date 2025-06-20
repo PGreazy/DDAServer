@@ -1,0 +1,40 @@
+{{- if .Values.migration.enabled }}
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: django-database-migrate
+  annotations:
+    "helm.sh/hook": pre-install,pre-upgrade
+    "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
+spec:
+  template:
+    spec:
+      restartPolicy: Never
+      containers:
+        - name: migrate
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          command: ["python", "manage.py", "migrate"]
+          # Since this is a one-time job, we don't need pgbouncer, we can
+          # use the database directly.
+          env:
+            - name: "DJANGO_SECRET"
+              valueFrom:
+                secretKeyRef:
+                  name: django-secret
+                  key: django_secret_token
+            - name: "DJANGO_ENV"
+              value: "{{ .Values.env.DJANGO_ENV }}"
+            - name: "DB_HOST"
+              value: "{{ .Values.pooler.db_host }}"
+            - name: "DB_PORT"
+              value: "{{ .Values.pooler.db_port }}"
+            - name: "DB_USER"
+              value: "{{ .Values.pooler.db_user }}"
+            - name: "DB_PASSWORD"
+              valueFrom:
+                secretKeyRef:
+                  name: db-secret
+                  key: password
+            - name: "DB_NAME"
+              value: "{{ .Values.pooler.db_name }}"
+{{- end }}
