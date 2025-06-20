@@ -2,4 +2,4 @@ apiVersion: v2
 name: dda-backend
 description: Helm Chart for the DDA Backend Django service.
 type: application
-version: 0.1.0
+version: 0.1.3

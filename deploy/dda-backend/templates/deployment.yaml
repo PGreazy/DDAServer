@@ -45,6 +45,16 @@ spec:
                 secretKeyRef:
                   name: django-secret
                   key: django_secret_token
+            - name: "GOOGLE_CLIENT_ID"
+              valueFrom:
+                secretKeyRef:
+                  name: google-credentials
+                  key: client_id
+            - name: "GOOGLE_CLIENT_SECRET"
+              valueFrom:
+                secretKeyRef:
+                  name: google-credentials
+                  key: secret_key
             - name: "DJANGO_ENV"
               value: "{{ .Values.env.DJANGO_ENV }}"
             - name: "DB_HOST"
@@ -97,7 +107,7 @@ spec:
                 secretKeyRef:
                   name: db-secret
                   key: password
-            - name: POSTGRESQL_DATABASE
+            - name: PGBOUNCER_DATABASE
               value: "{{ .Values.pooler.db_name }}"
             - name: PGBOUNCER_POOL_MODE
               value: "transaction"
