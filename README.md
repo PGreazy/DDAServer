@@ -30,6 +30,11 @@ do each of these steps, just ensure you have the correct environment
 variables updated.
 
 # Contributing Code
+To run tests:
+```
+poetry run pytest tests/
+```
+
 We use mypy for typing, and very strictly. Run the following to run
 mypy checks on your current branch:
 ```commandline
