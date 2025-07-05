@@ -64,6 +64,13 @@ async def update_user_profile(
         if existing_user_with_email is not None:
             raise ConflictError(resource_name="User", resource_id=str(user_id))
 
+    if update_user_dto.phone_number is not None:
+        existing_user_with_phone = await UserService.get_user_by_phone(
+            update_user_dto.phone_number
+        )
+        if existing_user_with_phone is not None:
+            raise ConflictError(resource_name="User", resource_id=str(user_id))
+
     updated_user = await UserService.update_user_profile(
         update_user_dto, cast(User, user)
     )

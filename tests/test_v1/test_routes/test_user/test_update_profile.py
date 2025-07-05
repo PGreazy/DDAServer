@@ -25,7 +25,7 @@ def _get_test_update_user_body(**kwargs) -> dict[str, str]:
 @no_type_check
 async def _create_additional_user(**kwargs) -> User:
     return await User.objects.acreate(
-        email="test_alt_user@email.com",
+        email=f"test_alt_user_{uuid.uuid4()}@email.com",
         family_name="Graham",
         given_name="Austin",
         **kwargs,
@@ -94,6 +94,22 @@ async def test_update_user_profile_returns_409_when_email_is_already_in_use(
     user_id = authed_api_patch.session.user.id
     alt_user = await _create_additional_user()
     test_body = _get_test_update_user_body(email=alt_user.email)
+    await authed_api_patch.caller(
+        f"/v1/user/{user_id}", body=test_body, expected_status_code=HTTPStatus.CONFLICT
+    )
+
+
+@pytest.mark.asyncio
+@pytest.mark.django_db
+async def test_update_user_profile_returns_409_when_phone_is_already_in_use(
+    api_patch: APICaller,
+) -> None:
+    authed_api_patch = await authed_request(api_patch)
+    user_id = authed_api_patch.session.user.id
+    alt_user = await _create_additional_user(
+        phone_number=f"+1{''.join(random.choices('123456789', k=10))}"
+    )
+    test_body = _get_test_update_user_body(phoneNumber=alt_user.phone_number)
     await authed_api_patch.caller(
         f"/v1/user/{user_id}", body=test_body, expected_status_code=HTTPStatus.CONFLICT
     )

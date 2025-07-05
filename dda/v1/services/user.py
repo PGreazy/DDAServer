@@ -27,6 +27,20 @@ class UserService:
         return await User.objects.filter(email=email).afirst()
 
     @staticmethod
+    async def get_user_by_phone(phone_number: str) -> User | None:
+        """
+        Get a user by their phone number, which should be guaranteed to be
+        unique.
+
+        Args:
+            phone_number (str): Phone number used to query for users.
+
+        Returns:
+            The user that matches that phone number, or None if no such user exists.
+        """
+        return await User.objects.filter(phone_number=phone_number).afirst()
+
+    @staticmethod
     async def get_user_by_id(user_id: UserId) -> User | None:
         """
         Get a user by ID.
