@@ -85,3 +85,20 @@ class UserService:
             await current_session.adelete()
             return None
         return current_session
+
+    @staticmethod
+    async def destroy_current_session(user: User) -> SessionToken | None:
+        """
+        Destroys the user's session, if there is one. If there isn't,
+        then fail silently since there's nothing to destroy.
+
+        Args:
+            user: The user whose session we should be destroying.
+
+        Returns:
+            The removed session, if there was one.
+        """
+        current_session = await user.get_session()
+        if current_session is not None:
+            await current_session.adelete()
+        return current_session
