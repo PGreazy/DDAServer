@@ -38,6 +38,19 @@ class UserCreateDto(BaseSchema):
     profile_picture: str | None = Field(default=None, pattern=_URL_REGEX)
 
 
+class UserUpdateDto(BaseSchema):
+    """
+    Schema that represents the fields a user may update
+    on their profile.
+    """
+
+    email: str | None = Field(default=None, pattern=_EMAIL_REGEX)
+    family_name: str | None = Field(default=None, min_length=1)
+    given_name: str | None = Field(default=None, min_length=1)
+    phone_number: str | None = Field(default=None, pattern=_PHONE_REGEX)
+    profile_picture: str | None = Field(default=None, pattern=_URL_REGEX)
+
+
 class UserSessionDto(BaseSchema):
     """
     Schema representing a user session object that should

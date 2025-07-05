@@ -3,6 +3,7 @@ from dda.v1.models.user import SessionToken, UserId
 from dda.v1.models.user import User
 from dda.v1.models.user import UserSource
 from dda.v1.schemas.user import UserCreateDto
+from dda.v1.schemas.user import UserUpdateDto
 
 
 class UserService:
@@ -64,6 +65,46 @@ class UserService:
             profile_picture=user_create_dto.profile_picture,
             source=source,
         )
+
+    @staticmethod
+    async def update_user_profile(user_update_dto: UserUpdateDto, user: User) -> User:
+        """
+        Update a user's profile. If email or phone is updated, it will trigger the
+        verification flow for the contact information.
+
+        Args:
+            user_update_dto: DTO object containing user update info.
+            user: User object to update.
+
+        Returns:
+            The updated user object.
+        """
+        user.is_email_verified = user.email != user_update_dto.email
+        user.email = (
+            user.email if user_update_dto.email is None else user_update_dto.email
+        )
+        user.family_name = (
+            user.family_name
+            if user_update_dto.family_name is None
+            else user_update_dto.family_name
+        )
+        user.given_name = (
+            user.given_name
+            if user_update_dto.given_name is None
+            else user_update_dto.given_name
+        )
+        user.phone_number = (
+            user.phone_number
+            if user_update_dto.phone_number is None
+            else user_update_dto.phone_number
+        )
+        user.profile_picture = (
+            user.profile_picture
+            if user_update_dto.profile_picture is None
+            else user_update_dto.profile_picture
+        )
+        await user.asave()
+        return user
 
     @staticmethod
     async def refresh_session_token(user: User) -> SessionToken:
