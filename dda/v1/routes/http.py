@@ -50,6 +50,15 @@ class APIResponse(BaseSchema, Generic[T]):
     error_message: str | None = None
 
 
+class EmptyAPIResponse(APIResponse[object]):
+    """
+    An extension of the generic response object `APIResponse` meant to
+    return an empty response with no errors.
+    """
+
+    data: object = {}
+
+
 TransactionId: TypeAlias = uuid.UUID
 
 

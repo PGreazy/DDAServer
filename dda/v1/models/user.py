@@ -40,6 +40,7 @@ class User(AbstractDatedModel):
     given_name = models.CharField(null=False)
     id = models.UUIDField(default=uuid.uuid4, primary_key=True)
     is_email_verified = models.BooleanField(default=False)
+    is_phone_verified = models.BooleanField(default=False)
     phone_number = models.CharField(null=True, unique=True)
     profile_picture = models.CharField(null=True)
     source = models.CharField(

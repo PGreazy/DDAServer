@@ -1,3 +1,4 @@
+import random
 import uuid
 from typing import Any
 from typing import Coroutine
@@ -24,6 +25,8 @@ async def _authenticated_session() -> UserSessionDto:
         family_name="Test",
         given_name="Dev",
         is_email_verified=True,
+        phone_number=f"+1{''.join(random.choices('123456789', k=10))}",
+        is_phone_verified=True,
         source=UserSource.GOOGLE,
     )
     new_token = await SessionToken.objects.acreate(user=new_user)
