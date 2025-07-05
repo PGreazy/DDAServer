@@ -24,17 +24,17 @@ def get_log_level() -> str:
     return "INFO"
 
 
-SESSION_LENGTH_MINUTES = int(os.environ.get("SESSION_LENGTH_MINUTES", 15))
+SESSION_LENGTH_MINUTES = int(os.environ.get("SESSION_LENGTH_MINUTES", 12 * 60))
 
 LOGGING = {
     "version": 1,
     "disable_existing_loggers": True,
     "formatters": {
         "json": {
-            '()': 'pythonjsonlogger.jsonlogger.JsonFormatter',
+            "()": "pythonjsonlogger.jsonlogger.JsonFormatter",
             "format": "{asctime} {levelname} {tid} {user_id} {message}",
             "style": "{",
-            "defaults": {"user_id": None}
+            "defaults": {"user_id": None},
         }
     },
     "handlers": {
