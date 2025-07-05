@@ -57,7 +57,7 @@ async def get_currently_authenticated_user(request: APIRequest) -> APIResponse[U
 @authn_router.delete(
     by_alias=True,
     path="/logout",
-    response=EmptyAPIResponse,
+    response={202: EmptyAPIResponse},
     summary="Deactivate the currently active user session.",
 )
 async def delete_session(request: APIRequest) -> tuple[int, EmptyAPIResponse]:

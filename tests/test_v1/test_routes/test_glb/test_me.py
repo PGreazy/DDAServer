@@ -25,6 +25,7 @@ async def test_get_authed_user_returns_401_if_no_header_is_supplied(
     await api_get("/v1/glb/auth/me", expected_status_code=HTTPStatus.UNAUTHORIZED)
 
 
+@pytest.mark.asyncio
 @pytest.mark.parametrize("test_authz_header", ["", "test-token", "Bwerf test-token"])
 async def test_get_authed_user_returns_401_if_authorization_header_is_malformed(
     api_get: APICaller, test_authz_header: str

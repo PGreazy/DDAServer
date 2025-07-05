@@ -71,5 +71,11 @@ def api_get(api_test_client: AsyncClient) -> APICaller:
 
 @pytest.fixture(scope="session")
 def api_post(api_test_client: AsyncClient) -> APICaller:
-    """Gets a callable that will POST ona given REST resource."""
+    """Gets a callable that will POST on a given REST resource."""
     return partial(_fetch_resource, api_test_client.post)
+
+
+@pytest.fixture(scope="session")
+def api_delete(api_test_client: AsyncClient) -> APICaller:
+    """Gets a callable that will DELETE on a given REST resource."""
+    return partial(_fetch_resource, api_test_client.delete)
