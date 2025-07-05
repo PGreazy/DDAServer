@@ -39,7 +39,13 @@ async def get_user_profile(
     authorize_user_is_me(user_id, request.state.user)
     user = await UserService.get_user_by_id(user_id)
     if user is None:
+        logger.error(
+            f"User was not found with id {user_id}", extra=request.state.dict()
+        )
         raise NotFoundError(resource_name="User", resource_id=str(user_id))
+    logger.info(
+        f"User profile for {user_id} was retrieved.", extra=request.state.dict()
+    )
     return APIResponse(data=UserDto.from_orm(user))
 
 
@@ -62,6 +68,9 @@ async def update_user_profile(
             update_user_dto.email
         )
         if existing_user_with_email is not None:
+            logger.error(
+                "Cannot update user due to duplicate email.", extra=request.state.dict()
+            )
             raise ConflictError(resource_name="User", resource_id=str(user_id))
 
     if update_user_dto.phone_number is not None:
@@ -69,9 +78,13 @@ async def update_user_profile(
             update_user_dto.phone_number
         )
         if existing_user_with_phone is not None:
+            logger.error(
+                "Cannot update user due to duplicate phone.", extra=request.state.dict()
+            )
             raise ConflictError(resource_name="User", resource_id=str(user_id))
 
     updated_user = await UserService.update_user_profile(
         update_user_dto, cast(User, user)
     )
+    logger.info("User profile was updated.", extra=request.state.dict())
     return APIResponse(data=UserDto.from_orm(updated_user))
