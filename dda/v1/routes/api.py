@@ -3,6 +3,7 @@ from django.urls import path
 from ninja import NinjaAPI
 from ninja.errors import ValidationError
 from dda.env import Env
+from dda.v1.exceptions import ConflictError
 from dda.v1.exceptions import NotFoundError
 from dda.v1.exceptions import UnauthenticatedError
 from dda.v1.exceptions import UnauthorizedError
@@ -51,6 +52,9 @@ dda_api.add_exception_handler(
 )
 dda_api.add_exception_handler(
     NotFoundError, partial(handle_resource_error, api=dda_api)
+)
+dda_api.add_exception_handler(
+    ConflictError, partial(handle_resource_error, api=dda_api)
 )
 
 

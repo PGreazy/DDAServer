@@ -5,6 +5,7 @@ from http import HTTPStatus
 
 _UNAUTHORIZED_ERROR_CODE = "UserUnauthorized"
 _NOT_FOUND_ERROR_CODE = "ResourceNotFound"
+_CONFLICT_ERROR_CODE = "ResourceHasConflict"
 
 
 class ResourceException(Exception, ABC):
@@ -60,3 +61,16 @@ class NotFoundError(ResourceException):
 
     def __str__(self) -> str:
         return f'Resource "{self.resource_name}" identified by "{self.resource_id}" was not found'
+
+
+class ConflictError(ResourceException):
+    """
+    Wrapper exception denoting when a user tries to act on a resource that
+    would conflict with another resource.
+    """
+
+    error_code = _CONFLICT_ERROR_CODE
+    http_status = HTTPStatus.CONFLICT
+
+    def __str__(self) -> str:
+        return f'Operation on resource "{self.resource_name}" identified by "{self.resource_id}" would result in a conflict.'

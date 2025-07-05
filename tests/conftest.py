@@ -1,3 +1,5 @@
+from http import HTTPStatus
+
 import pytest
 from functools import partial
 from typing import Any
@@ -19,7 +21,7 @@ async def _fetch_resource(
     request_method_caller: Callable[..., Any],  # No proper type for an ASGI response...
     path: str,
     body: dict[str, Any] | None = None,
-    expected_status_code: int | None = None,
+    expected_status_code: int = HTTPStatus.OK,
     headers: HeaderDict | None = None,
     query_params: QueryParamDict | None = None,
 ) -> APIResponse:
@@ -79,3 +81,9 @@ def api_post(api_test_client: AsyncClient) -> APICaller:
 def api_delete(api_test_client: AsyncClient) -> APICaller:
     """Gets a callable that will DELETE on a given REST resource."""
     return partial(_fetch_resource, api_test_client.delete)
+
+
+@pytest.fixture(scope="session")
+def api_patch(api_test_client: AsyncClient) -> APICaller:
+    """Gets a callable that will PATCH on a given REST resource."""
+    return partial(_fetch_resource, api_test_client.patch)

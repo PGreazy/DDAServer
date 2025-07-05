@@ -2,7 +2,7 @@ import logging
 
 from ninja import Router
 
-from dda.v1.exceptions import NotFoundError
+from dda.v1.exceptions import NotFoundError, ConflictError
 from dda.v1.exceptions import UnauthorizedError
 from dda.v1.models.user import User
 from dda.v1.models.user import UserId
@@ -50,8 +50,15 @@ async def update_user_profile(
 ) -> APIResponse[UserDto]:
     authorize_user_is_me(user_id, request.state.user)
     user = await UserService.get_user_by_id(user_id)
-    if user is None:
-        raise NotFoundError(resource_name="User", resource_id=str(user_id))
+    # No need to check if None, we know it is since the only user
+    # that can update a profile is the owner of the profile.
+
+    if update_user_dto.email is not None:
+        existing_user_with_email = await UserService.get_user_by_email(
+            update_user_dto.email
+        )
+        if existing_user_with_email is not None:
+            raise ConflictError(resource_name="User", resource_id=str(user_id))
 
     updated_user = await UserService.update_user_profile(update_user_dto, user)
     return APIResponse(data=UserDto.from_orm(updated_user))

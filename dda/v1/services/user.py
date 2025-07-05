@@ -79,8 +79,11 @@ class UserService:
         Returns:
             The updated user object.
         """
-        user.is_email_verified = (
+        email_has_changed = (
             user_update_dto.email is not None and user.email != user_update_dto.email
+        )
+        user.is_email_verified = (
+            user.is_email_verified if not email_has_changed else False
         )
         user.email = (
             user.email if user_update_dto.email is None else user_update_dto.email
@@ -95,9 +98,12 @@ class UserService:
             if user_update_dto.given_name is None
             else user_update_dto.given_name
         )
-        user.is_phone_verified = (
+        phone_has_changed = (
             user_update_dto.phone_number is not None
             and user.phone_number != user_update_dto.phone_number
+        )
+        user.is_phone_verified = (
+            user.is_phone_verified if not phone_has_changed else False
         )
         user.phone_number = (
             user.phone_number
