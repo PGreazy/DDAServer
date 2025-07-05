@@ -1,21 +1,15 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="Run Local" type="PythonConfigurationType" factoryName="Python">
     <module name="DDAServer" />
-    <option name="ENV_FILES" value="$PROJECT_DIR$" />
+    <option name="ENV_FILES" value="$PROJECT_DIR$/.env" />
     <option name="INTERPRETER_OPTIONS" value="" />
     <option name="PARENT_ENVS" value="true" />
     <envs>
-      <env name="DATABASE_URL" value="postgres://admin:admin@localhost:5432/dda_db" />
-      <env name="DEBUG" value="True" />
-      <env name="DJANGO_ENV" value="LOCAL" />
-      <env name="DJANGO_SECRET" value="secret" />
-      <env name="GOOGLE_CLIENT_ID" value="&lt;&gt;" />
-      <env name="GOOGLE_CLIENT_SECRET" value="&lt;&gt;" />
       <env name="PYTHONUNBUFFERED" value="1" />
     </envs>
     <option name="SDK_HOME" value="" />
     <option name="SDK_NAME" value="Poetry (DDAServer)" />
-    <option name="WORKING_DIRECTORY" value="" />
+    <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
     <option name="IS_MODULE_SDK" value="false" />
     <option name="ADD_CONTENT_ROOTS" value="true" />
     <option name="ADD_SOURCE_ROOTS" value="true" />
