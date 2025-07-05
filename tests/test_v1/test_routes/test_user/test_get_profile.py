@@ -6,6 +6,15 @@ from tests.wrapper import authed_request
 
 
 @pytest.mark.asyncio
+async def test_get_user_profile_returns_401_if_no_header_is_supplied(
+    api_get: APICaller,
+) -> None:
+    await api_get(
+        f"/v1/user/{uuid.uuid4()}", expected_status_code=HTTPStatus.UNAUTHORIZED
+    )
+
+
+@pytest.mark.asyncio
 async def test_get_user_profile_returns_400_if_invalid_user_id(
     api_get: APICaller,
 ) -> None:

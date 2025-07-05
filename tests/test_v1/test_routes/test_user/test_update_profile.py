@@ -33,6 +33,17 @@ async def _create_additional_user(**kwargs) -> User:
 
 
 @pytest.mark.asyncio
+async def test_update_user_profile_returns_401_if_no_header_is_supplied(
+    api_patch: APICaller,
+) -> None:
+    await api_patch(
+        f"/v1/user/{uuid.uuid4()}",
+        body={},
+        expected_status_code=HTTPStatus.UNAUTHORIZED,
+    )
+
+
+@pytest.mark.asyncio
 async def test_update_user_profile_returns_400_if_invalid_user_id(
     api_patch: APICaller,
 ) -> None:

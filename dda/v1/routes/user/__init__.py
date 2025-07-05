@@ -38,6 +38,8 @@ async def get_user_profile(
 ) -> APIResponse[UserDto]:
     authorize_user_is_me(user_id, request.state.user)
     user = await UserService.get_user_by_id(user_id)
+    # Meaningless check currently. When users are able to get profiles
+    # of other users in their campaigns, then this will be of use.
     if user is None:
         logger.error(
             f"User was not found with id {user_id}", extra=request.state.dict()
