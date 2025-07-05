@@ -1,8 +1,10 @@
 import logging
 from http import HTTPStatus
+
 from django.http import HttpResponse
 from ninja import NinjaAPI
 from ninja.errors import ValidationError
+from dda.v1.exceptions import ResourceException
 from dda.v1.exceptions import UnauthenticatedError
 from dda.v1.routes.http import APIRequest
 from dda.v1.routes.http import APIResponse
@@ -165,4 +167,32 @@ def handle_unauthenticated_error(
             error_message="Unauthenticated users cannot make this request.",
         ).model_dump(by_alias=True),
         status=HTTPStatus.UNAUTHORIZED,
+    )
+
+
+def handle_resource_error(
+    request: APIRequest, _exc: ResourceException, api: NinjaAPI
+) -> HttpResponse:
+    """
+    Exception handler to catch an error with operating on a REST resource.
+
+    Args:
+        request (APIRequest): The originating request.
+        _exc (Exception): The source exception, unused.
+        api (NinjaAPI): The root API object serving this request.
+
+    Returns:
+        An HttpResponse containing the error information.
+    """
+    logger.error(
+        str(_exc),
+        extra=request.state.dict(),
+    )
+    return api.create_response(
+        request,
+        APIResponse(
+            error_code=_exc.error_code,
+            error_message=str(_exc),
+        ).model_dump(by_alias=True),
+        status=_exc.http_status,
     )

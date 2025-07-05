@@ -1,4 +1,5 @@
-from dda.v1.models.user import SessionToken
+from typing import cast
+from dda.v1.models.user import SessionToken, UserId
 from dda.v1.models.user import User
 from dda.v1.models.user import UserSource
 from dda.v1.schemas.user import UserCreateDto
@@ -23,6 +24,19 @@ class UserService:
             The user that matches that email, or None if no such user exists.
         """
         return await User.objects.filter(email=email).afirst()
+
+    @staticmethod
+    async def get_user_by_id(user_id: UserId) -> User | None:
+        """
+        Get a user by ID.
+
+        Args:
+            user_id (UserId): User ID by which to fetch the user.
+
+        Returns:
+            The requested user, if it exists.
+        """
+        return await User.objects.filter(id=user_id).afirst()
 
     @staticmethod
     async def get_or_create_user(
@@ -98,7 +112,7 @@ class UserService:
         Returns:
             The removed session, if there was one.
         """
-        current_session = await user.get_session()
+        current_session = cast(SessionToken | None, await user.get_session())
         if current_session is not None:
             await current_session.adelete()
         return current_session
