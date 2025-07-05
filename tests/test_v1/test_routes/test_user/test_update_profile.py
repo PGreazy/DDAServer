@@ -3,11 +3,14 @@ import uuid
 import pytest
 from http import HTTPStatus
 
+from typing_extensions import no_type_check
+
 from dda.v1.models.user import User
 from tests.types import APICaller
 from tests.wrapper import authed_request
 
 
+@no_type_check
 def _get_test_update_user_body(**kwargs) -> dict[str, str]:
     return {
         "email": f"update_email_{uuid.uuid4()}@email.com",
@@ -19,6 +22,7 @@ def _get_test_update_user_body(**kwargs) -> dict[str, str]:
     }
 
 
+@no_type_check
 async def _create_additional_user(**kwargs) -> User:
     return await User.objects.acreate(
         email="test_alt_user@email.com",
@@ -153,6 +157,9 @@ async def test_update_user_profile_returns_200_and_unverifies_contact_when_chang
     authed_api_patch = await authed_request(api_patch)
     user_id = authed_api_patch.session.user.id
     db_user = await User.objects.aget(id=user_id)
+    assert db_user.is_email_verified
+    assert db_user.is_phone_verified
+
     test_body = _get_test_update_user_body()
 
     await authed_api_patch.caller(f"/v1/user/{user_id}", body=test_body)
@@ -161,3 +168,26 @@ async def test_update_user_profile_returns_200_and_unverifies_contact_when_chang
 
     assert not db_user.is_email_verified
     assert not db_user.is_phone_verified
+
+
+@pytest.mark.asyncio
+@pytest.mark.django_db
+async def test_update_user_profile_returns_200_and_doesnt_unverify_when_contact_not_changed(
+    api_patch: APICaller,
+) -> None:
+    authed_api_patch = await authed_request(api_patch)
+    user_id = authed_api_patch.session.user.id
+    db_user = await User.objects.aget(id=user_id)
+    assert db_user.is_email_verified
+    assert db_user.is_phone_verified
+
+    test_body = _get_test_update_user_body()
+    del test_body["email"]
+    del test_body["phoneNumber"]
+
+    await authed_api_patch.caller(f"/v1/user/{user_id}", body=test_body)
+
+    await db_user.arefresh_from_db()
+
+    assert db_user.is_email_verified
+    assert db_user.is_phone_verified

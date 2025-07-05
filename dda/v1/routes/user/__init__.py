@@ -1,9 +1,11 @@
 import logging
-
+from typing import cast
 from ninja import Router
 
-from dda.v1.exceptions import NotFoundError, ConflictError
+from dda.v1.exceptions import ConflictError
+from dda.v1.exceptions import NotFoundError
 from dda.v1.exceptions import UnauthorizedError
+from dda.v1.exceptions import UnauthenticatedError
 from dda.v1.models.user import User
 from dda.v1.models.user import UserId
 from dda.v1.routes.http import APIRequest
@@ -18,8 +20,10 @@ logger = logging.getLogger("dda")
 user_router = Router(tags=["user"])
 
 
-def authorize_user_is_me(target_user_id: UserId, user: User):
-    if target_user_id != user.id:
+def authorize_user_is_me(target_user_id: UserId, request_user: User | None) -> None:
+    if request_user is None:
+        raise UnauthenticatedError()
+    if target_user_id != request_user.id:
         raise UnauthorizedError(resource_name="User", resource_id=str(target_user_id))
 
 
@@ -60,5 +64,7 @@ async def update_user_profile(
         if existing_user_with_email is not None:
             raise ConflictError(resource_name="User", resource_id=str(user_id))
 
-    updated_user = await UserService.update_user_profile(update_user_dto, user)
+    updated_user = await UserService.update_user_profile(
+        update_user_dto, cast(User, user)
+    )
     return APIResponse(data=UserDto.from_orm(updated_user))
