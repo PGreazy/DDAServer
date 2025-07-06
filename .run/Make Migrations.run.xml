@@ -1,14 +1,11 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="Make Migrations" type="PythonConfigurationType" factoryName="Python">
     <module name="DDAServer" />
-    <option name="ENV_FILES" value="" />
+    <option name="ENV_FILES" value="$PROJECT_DIR$/.env" />
     <option name="INTERPRETER_OPTIONS" value="" />
     <option name="PARENT_ENVS" value="true" />
     <envs>
-      <env name="DATABASE_URL" value="postgres://admin:admin@localhost:5432/dda_db" />
-      <env name="DJANGO_SECRET" value="secret" />
       <env name="PYTHONUNBUFFERED" value="1" />
-      <env name="DJANGO_ENV" value="LOCAL" />
     </envs>
     <option name="SDK_HOME" value="" />
     <option name="SDK_NAME" value="Poetry (DDAServer)" />
